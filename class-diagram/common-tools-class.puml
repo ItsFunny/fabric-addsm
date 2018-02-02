@@ -1,0 +1,310 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck {
+ class Messages {
+  GeneralErrors []string
+  ElementWarnings []*ElementMessage
+  ElementErrors []*ElementMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck {
+ class ElementMessage {
+  Path string
+  Message string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen\\ca {
+ class CA {
+  Name string
+  Signer crypto.Signer
+  SignCert *x509.Certificate
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class HostnameData {
+  Prefix string
+  Index int
+  Domain string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class SpecData {
+  Hostname string
+  Domain string
+  CommonName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class NodeTemplate {
+  Count int
+  Start int
+  Hostname string
+  SANS []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class NodeSpec {
+  Hostname string
+  CommonName string
+  SANS []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class UsersSpec {
+  Count int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class OrgSpec {
+  Name string
+  Domain string
+  CA NodeSpec
+  Template NodeTemplate
+  Specs []NodeSpec
+  Users UsersSpec
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class Config {
+  OrdererOrgs []OrgSpec
+  PeerOrgs []OrgSpec
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class dynamicFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class dynamicMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class dynamicSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class baseField {
+  msg proto.Message
+  name string
+  fType reflect.Type
+  vType reflect.Type
+  value reflect.Value
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class plainField {
+  baseField
+  populateFrom func(source interface  { },destType reflect.Type)(reflect.Value,error)
+  populateTo func(source reflect.Value)(interface  { },error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class mapField {
+  baseField
+  populateFrom func(key string,value interface  { },destType reflect.Type)(reflect.Value,error)
+  populateTo func(key string,value reflect.Value)(interface  { },error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class sliceField {
+  baseField
+  populateTo func(i int,source reflect.Value)(interface  { },error)
+  populateFrom func(i int,source interface  { },destType reflect.Type)(reflect.Value,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class nestedFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class nestedMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class nestedSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class staticallyOpaqueFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class staticallyOpaqueMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class staticallyOpaqueSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class DynamicMessageWrapper {
+  *ContextlessMsg
+  typeName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class SimpleMsg {
+  PlainField string
+  MapField map[string]string
+  SliceField []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class NestedMsg {
+  PlainNestedField *SimpleMsg
+  MapNestedField map[string]*SimpleMsg
+  SliceNestedField []*SimpleMsg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class StaticallyOpaqueMsg {
+  PlainOpaqueField []byte
+  MapOpaqueField map[string][]byte
+  SliceOpaqueField [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class VariablyOpaqueMsg {
+  OpaqueType string
+  PlainOpaqueField []byte
+  MapOpaqueField map[string][]byte
+  SliceOpaqueField [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class DynamicMsg {
+  DynamicType string
+  PlainDynamicField *ContextlessMsg
+  MapDynamicField map[string]*ContextlessMsg
+  SliceDynamicField []*ContextlessMsg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class ContextlessMsg {
+  OpaqueField []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class variablyOpaqueFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class variablyOpaqueMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class variablyOpaqueSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface StaticallyOpaqueFieldProto  {
+  StaticallyOpaqueFields()[]string
+  StaticallyOpaqueFieldProto(name string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface StaticallyOpaqueMapFieldProto  {
+  StaticallyOpaqueMapFields()[]string
+  StaticallyOpaqueMapFieldProto(name string,key string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface StaticallyOpaqueSliceFieldProto  {
+  StaticallyOpaqueSliceFields()[]string
+  StaticallyOpaqueSliceFieldProto(name string,index int)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface VariablyOpaqueFieldProto  {
+  VariablyOpaqueFields()[]string
+  VariablyOpaqueFieldProto(name string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface VariablyOpaqueMapFieldProto  {
+  VariablyOpaqueMapFields()[]string
+  VariablyOpaqueMapFieldProto(name string,key string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface VariablyOpaqueSliceFieldProto  {
+  VariablyOpaqueSliceFields()[]string
+  VariablyOpaqueSliceFieldProto(name string,index int)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DynamicFieldProto  {
+  DynamicFields()[]string
+  DynamicFieldProto(name string,underlying proto.Message)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DynamicMapFieldProto  {
+  DynamicMapFields()[]string
+  DynamicMapFieldProto(name string,key string,underlying proto.Message)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DynamicSliceFieldProto  {
+  DynamicSliceFields()[]string
+  DynamicSliceFieldProto(name string,index int,underlying proto.Message)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DecoratedProto  {
+  Underlying()proto.Message
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface protoFieldFactory  {
+  Handles(msg proto.Message,fieldName string,fieldType reflect.Type,fieldValue reflect.Value)bool
+  NewProtoField(msg proto.Message,fieldName string,fieldType reflect.Type,fieldValue reflect.Value)(protoField,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface protoField  {
+  Name()string
+  PopulateFrom(source interface  { })error
+  PopulateTo()(interface  { },error)
+}
+}
+github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.Messages ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.ElementMessage : ElementWarnings
+github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.Messages ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.ElementMessage : ElementErrors
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeSpec : CA
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeTemplate : Template
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeSpec : Specs
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.UsersSpec : Users
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.Config ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec : OrdererOrgs
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.Config ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec : PeerOrgs
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.plainField -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.mapField -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.sliceField -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMessageWrapper -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg ---> github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg : PlainNestedField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg : MapNestedField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg : SliceNestedField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg ---> github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg : PlainDynamicField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg : MapDynamicField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg : SliceDynamicField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.StaticallyOpaqueFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.StaticallyOpaqueMapFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.StaticallyOpaqueSliceFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.VariablyOpaqueFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.VariablyOpaqueMapFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.VariablyOpaqueSliceFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DynamicFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DynamicMapFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DynamicSliceFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DecoratedProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMessageWrapper
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueSliceFieldFactory
+@enduml

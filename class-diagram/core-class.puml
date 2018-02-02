@@ -1,0 +1,2207 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core {
+ class ServerAdmin {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ccProviderFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ccProviderImpl {
+  txsim ledger.TxSimulator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ccProviderContextImpl {
+  ctx *ccprovider.CCContext
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class chaincodeRTEnv {
+  handler *Handler
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class runningChaincodes {
+  sync.RWMutex
+  chaincodeMap map[string]*chaincodeRTEnv
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ChaincodeSupport {
+  runningChaincodes *runningChaincodes
+  peerAddress string
+  ccStartupTimeout time.Duration
+  peerNetworkID string
+  peerID string
+  peerTLSCertFile string
+  peerTLSKeyFile string
+  peerTLSSvrHostOrd string
+  keepalive time.Duration
+  chaincodeLogLevel string
+  shimLogLevel string
+  logFormat string
+  executetimeout time.Duration
+  userRunsCC bool
+  peerTLS bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class DuplicateChaincodeHandlerError {
+  ChaincodeID *pb.ChaincodeID
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class transactionContext {
+  chainID string
+  signedProp *pb.SignedProposal
+  proposal *pb.Proposal
+  responseNotifier chan *pb.ChaincodeMessage
+  queryIteratorMap map[string]commonledger.ResultsIterator
+  txsimulator ledger.TxSimulator
+  historyQueryExecutor ledger.HistoryQueryExecutor
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class nextStateInfo {
+  msg *pb.ChaincodeMessage
+  sendToCC bool
+  sendSync bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class Handler {
+  sync.RWMutex
+  serialLock sync.Mutex
+  ChatStream ccintf.ChaincodeStream
+  FSM *fsm.FSM
+  ChaincodeID *pb.ChaincodeID
+  ccInstance *sysccprovider.ChaincodeInstance
+  chaincodeSupport *ChaincodeSupport
+  registered bool
+  readyNotify chan bool
+  txCtxs map[string]*transactionContext
+  txidMap map[string]bool
+  nextState chan *nextStateInfo
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car {
+ class Platform {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang {
+ class CodeDescriptor {
+  Gopath,Pkg string
+  Cleanup func()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang {
+ class SourceDescriptor {
+  Name,Path string
+  Info os.FileInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang {
+ class Platform {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java {
+ class Platform {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\util {
+ class DockerBuildOptions {
+  Image string
+  Env []string
+  Cmd string
+  InputStream io.Reader
+  OutputStream io.Writer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class ChaincodeStub {
+  TxID string
+  chaincodeEvent *pb.ChaincodeEvent
+  args [][]byte
+  handler *Handler
+  signedProposal *pb.SignedProposal
+  proposal *pb.Proposal
+  creator []byte
+  transient map[string][]byte
+  binding []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class CommonIterator {
+  handler *Handler
+  uuid string
+  response *pb.QueryResponse
+  currentLoc int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class StateQueryIterator {
+  *CommonIterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class HistoryQueryIterator {
+  *CommonIterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class ChaincodeLogger {
+  logger *logging.Logger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class nextStateInfo {
+  msg *pb.ChaincodeMessage
+  sendToCC bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class Handler {
+  sync.RWMutex
+  serialLock sync.Mutex
+  To string
+  ChatStream PeerChaincodeStream
+  FSM *fsm.FSM
+  cc Chaincode
+  responseChannel map[string]chan pb.ChaincodeMessage
+  nextState chan *nextStateInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class inProcStream {
+  recv chan *pb.ChaincodeMessage
+  send chan *pb.ChaincodeMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class MockStub {
+  args [][]byte
+  cc Chaincode
+  Name string
+  State map[string][]byte
+  Keys *list.List
+  Invokables map[string]*MockStub
+  TxID string
+  TxTimestamp *timestamp.Timestamp
+  signedProposal *pb.SignedProposal
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class MockStateRangeQueryIterator {
+  Closed bool
+  Stub *MockStub
+  StartKey string
+  EndKey string
+  Current *list.Element
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class KeepaliveOptions {
+  ClientKeepaliveTime int
+  ClientKeepaliveTimeout int
+  ServerKeepaliveTime int
+  ServerKeepaliveTimeout int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class CASupport {
+  sync.RWMutex
+  AppRootCAsByChain map[string][][]byte
+  OrdererRootCAsByChain map[string][][]byte
+  ClientRootCAs [][]byte
+  ServerRootCAs [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class serverCreds {
+  serverConfig *tls.Config
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class connProducer {
+  sync.RWMutex
+  endpoints []string
+  connect ConnectionFactory
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class SecureServerConfig {
+  ServerCertificate []byte
+  ServerKey []byte
+  ServerRootCAs [][]byte
+  ClientRootCAs [][]byte
+  UseTLS bool
+  RequireClientCert bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class grpcServerImpl {
+  address string
+  listener net.Listener
+  server *grpc.Server
+  serverCertificate tls.Certificate
+  serverKeyPEM []byte
+  serverRootCAs []tls.Certificate
+  lock *sync.Mutex
+  clientRootCAs map[string]*x509.Certificate
+  tlsConfig *tls.Config
+  tlsEnabled bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ class Empty {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ class testServiceClient {
+  cc *grpc1.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer {
+ class LedgerCommitter {
+  ledger ledger.PeerLedger
+  validator txvalidator.Validator
+  eventer ConfigBlockEventer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ class vsccValidatorImpl {
+  support Support
+  ccprovider ccprovider.ChaincodeProvider
+  sccprovider sysccprovider.SystemChaincodeProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ class txValidator {
+  support Support
+  vscc vsccValidator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class ccInfoCacheImpl {
+  sync.RWMutex
+  cache map[string]*ChaincodeData
+  cacheSupport CCCacheSupport
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CCInfoFSImpl {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CCContext {
+  ChainID string
+  Name string
+  Version string
+  TxID string
+  Syscc bool
+  SignedProposal *pb.SignedProposal
+  Proposal *pb.Proposal
+  canonicalName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class ChaincodeData {
+  Name string
+  Version string
+  Escc string
+  Vscc string
+  Policy []byte
+  Data []byte
+  Id []byte
+  InstantiationPolicy []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CDSData {
+  CodeHash []byte
+  MetaDataHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CDSPackage {
+  buf []byte
+  depSpec *pb.ChaincodeDeploymentSpec
+  data *CDSData
+  datab []byte
+  id []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class SignedCDSData {
+  CodeHash []byte
+  MetaDataHash []byte
+  SignatureHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class SignedCDSPackage {
+  buf []byte
+  depSpec *pb.ChaincodeDeploymentSpec
+  sDepSpec *pb.SignedChaincodeDeploymentSpec
+  env *common.Envelope
+  data *SignedCDSData
+  datab []byte
+  id []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\sysccprovider {
+ class ChaincodeInstance {
+  ChainID string
+  ChaincodeName string
+  ChaincodeVersion string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\ccintf {
+ class CCID {
+  ChaincodeSpec *pb.ChaincodeSpec
+  NetworkID string
+  PeerID string
+  ChainID string
+  Version string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class refCountedLock {
+  refCount int
+  lock *sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class VMController {
+  sync.RWMutex
+  containerLocks map[string]*refCountedLock
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class VMCResp {
+  Err error
+  Resp interface  { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class CreateImageReq {
+  ccintf.CCID
+  Reader io.Reader
+  Args []string
+  Env []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class StartImageReq {
+  ccintf.CCID
+  Builder api.BuildSpecFactory
+  Args []string
+  Env []string
+  PrelaunchFunc api.PrelaunchFunc
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class StopImageReq {
+  ccintf.CCID
+  Timeout uint
+  Dontkill bool
+  Dontremove bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class DestroyImageReq {
+  ccintf.CCID
+  Timeout uint
+  Force bool
+  NoPrune bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\dockercontroller {
+ class DockerVM {
+  id string
+  getClientFnc getClient
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\inproccontroller {
+ class inprocContainer {
+  chaincode shim.Chaincode
+  running bool
+  args []string
+  env []string
+  stopChan chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\inproccontroller {
+ class InprocVM {
+  id string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\inproccontroller {
+ class inProcStream {
+  recv chan *pb.ChaincodeMessage
+  send chan *pb.ChaincodeMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ class VM {
+  Client *docker.Client
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider {
+ class blocksProviderImpl {
+  chainID string
+  client streamClient
+  gossip GossipServiceAdapter
+  mcs api.MessageCryptoService
+  done int32
+  wrongStatusThreshold int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice {
+ class broadcastClient {
+  stopFlag int32
+  sync.Mutex
+  stopChan chan struct { }
+  createClient clientFactory
+  shouldRetry retryPolicy
+  onConnect broadcastSetup
+  prod comm.ConnectionProducer
+  blocksprovider.BlocksDeliverer
+  conn *connection
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice {
+ class connection {
+  sync.Once
+  *grpc.ClientConn
+  cancel context.CancelFunc
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice {
+ class deliverServiceImpl {
+  conf *Config
+  blockProviders map[string]blocksprovider.BlocksProvider
+  lock sync.RWMutex
+  stopping bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice {
+ class Config {
+  ConnFactory func(channelID string)func(endpoint string)(*grpc.ClientConn,error)
+  ABCFactory func(*grpc.ClientConn)orderer.AtomicBroadcastClient
+  CryptoSvc api.MessageCryptoService
+  Gossip blocksprovider.GossipServiceAdapter
+  Endpoints []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks {
+ class MockGossipServiceAdapter {
+  AddPayloadsCnt int32
+  GossipBlockDisseminations chan uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks {
+ class MockAtomicBroadcastClient {
+  BD *MockBlocksDeliverer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks {
+ class MockBlocksDeliverer {
+  DisconnectCalled chan struct { }
+  CloseCalled chan struct { }
+  Pos uint64
+  grpc.ClientStream
+  RecvCnt int32
+  MockRecv func(mock *MockBlocksDeliverer)(*orderer.DeliverResponse,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks {
+ class MockLedgerInfo {
+  Height uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks {
+ class Orderer {
+  net.Listener
+  *grpc.Server
+  nextExpectedSeek uint64
+  t *testing.T
+  blockChannel chan uint64
+  stopChan chan struct { }
+  failFlag int32
+  connCount uint32
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice {
+ class blocksRequester {
+  chainID string
+  client blocksprovider.BlocksDeliverer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\endorser {
+ class chaincodeError {
+  status int32
+  msg string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\endorser {
+ class Endorser {
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core {
+ class PeerConnectionFSM {
+  To string
+  FSM *fsm.FSM
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example {
+ class App {
+  name string
+  ledger ledger.PeerLedger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example {
+ class Committer {
+  ledger ledger.PeerLedger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example {
+ class Consenter {
+  blockNum uint64
+  previousHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example {
+ class MarbleApp {
+  name string
+  ledger ledger.PeerLedger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example {
+ class Marble {
+  Name string
+  Color string
+  Size int
+  User string
+  Rev string
+  Txid string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb {
+ class HistoryDBProvider {
+  dbProvider *leveldbhelper.Provider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb {
+ class historyDB {
+  db *leveldbhelper.DBHandle
+  dbName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb {
+ class LevelHistoryDBQueryExecutor {
+  historyDB *historyDB
+  blockStore blkstorage.BlockStore
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb {
+ class historyScanner {
+  compositePartialKey []byte
+  namespace string
+  key string
+  dbItr iterator.Iterator
+  blockStore blkstorage.BlockStore
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger {
+ class kvLedger {
+  ledgerID string
+  blockStore blkstorage.BlockStore
+  txtmgmt txmgr.TxMgr
+  historyDB historydb.HistoryDB
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger {
+ class Provider {
+  idStore *idStore
+  blockStoreProvider blkstorage.BlockStoreProvider
+  vdbProvider statedb.VersionedDBProvider
+  historydbProvider historydb.HistoryDBProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger {
+ class idStore {
+  db *leveldbhelper.DB
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger {
+ class recoverer {
+  firstBlockNum uint64
+  recoverable recoverable
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil {
+ class RangeQueryResultsHelper {
+  pendingResults []*kvrwset.KVRead
+  mt *merkleTree
+  maxDegree uint32
+  hashingEnabled bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil {
+ class merkleTree {
+  tree map[MerkleTreeLevel][]Hash
+  maxLevel MerkleTreeLevel
+  maxDegree uint32
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil {
+ class nsRWs {
+  readMap map[string]*kvrwset.KVRead
+  writeMap map[string]*kvrwset.KVWrite
+  rangeQueriesMap map[rangeQueryKey]*kvrwset.RangeQueryInfo
+  rangeQueriesKeys []rangeQueryKey
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil {
+ class rangeQueryKey {
+  startKey string
+  endKey string
+  itrExhausted bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil {
+ class RWSetBuilder {
+  rwMap map[string]*nsRWs
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil {
+ class TxRwSet {
+  NsRwSets []*NsRwSet
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil {
+ class NsRwSet {
+  NameSpace string
+  KvRwSet *kvrwset.KVRWSet
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb {
+ class VersionedDBProvider {
+  couchInstance *couchdb.CouchInstance
+  databases map[string]*VersionedDB
+  mux sync.Mutex
+  openCounts uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb {
+ class VersionedDB {
+  db *couchdb.CouchDatabase
+  dbName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb {
+ class couchSavepointData {
+  BlockNum uint64
+  TxNum uint64
+  UpdateSeq string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb {
+ class kvScanner {
+  cursor int
+  namespace string
+  results []couchdb.QueryResult
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb {
+ class queryScanner {
+  cursor int
+  results []couchdb.QueryResult
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb {
+ class TestVDBEnv {
+  t testing.TB
+  DBProvider statedb.VersionedDBProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ class CompositeKey {
+  Namespace string
+  Key string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ class VersionedValue {
+  Value []byte
+  Version *version.Height
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ class VersionedKV {
+  CompositeKey
+  VersionedValue
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ class nsUpdates {
+  m map[string]*VersionedValue
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ class UpdateBatch {
+  updates map[string]*nsUpdates
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ class nsIterator {
+  ns string
+  nsUpdates *nsUpdates
+  sortedKeys []string
+  nextIndex int
+  lastIndex int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb {
+ class VersionedDBProvider {
+  dbProvider *leveldbhelper.Provider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb {
+ class versionedDB {
+  db *leveldbhelper.DBHandle
+  dbName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb {
+ class kvScanner {
+  namespace string
+  dbItr iterator.Iterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb {
+ class TestVDBEnv {
+  t testing.TB
+  DBProvider statedb.VersionedDBProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr {
+ class queryHelper {
+  txmgr *LockBasedTxMgr
+  rwsetBuilder *rwsetutil.RWSetBuilder
+  itrs []*resultsItr
+  err error
+  doneInvoked bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr {
+ class resultsItr {
+  ns string
+  endKey string
+  dbItr statedb.ResultsIterator
+  rwSetBuilder *rwsetutil.RWSetBuilder
+  rangeQueryInfo *kvrwset.RangeQueryInfo
+  rangeQueryResultsHelper *rwsetutil.RangeQueryResultsHelper
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr {
+ class queryResultsItr {
+  DBItr statedb.ResultsIterator
+  RWSetBuilder *rwsetutil.RWSetBuilder
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr {
+ class lockBasedQueryExecutor {
+  helper *queryHelper
+  id string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr {
+ class lockBasedTxSimulator {
+  lockBasedQueryExecutor
+  rwsetBuilder *rwsetutil.RWSetBuilder
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr {
+ class LockBasedTxMgr {
+  db statedb.VersionedDB
+  validator validator.Validator
+  batch *statedb.UpdateBatch
+  currentBlock *common.Block
+  commitRWLock sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval {
+ class combinedIterator {
+  ns string
+  db statedb.VersionedDB
+  updates *statedb.UpdateBatch
+  endKey string
+  includeEndKey bool
+  dbItr statedb.ResultsIterator
+  updatesItr statedb.ResultsIterator
+  dbItem statedb.QueryResult
+  updatesItem statedb.QueryResult
+  endKeyServed bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval {
+ class rangeQueryResultsValidator {
+  rqInfo *kvrwset.RangeQueryInfo
+  itr statedb.ResultsIterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval {
+ class rangeQueryHashValidator {
+  rqInfo *kvrwset.RangeQueryInfo
+  itr statedb.ResultsIterator
+  resultsHelper *rwsetutil.RangeQueryResultsHelper
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval {
+ class Validator {
+  db statedb.VersionedDB
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\version {
+ class Height {
+  BlockNum uint64
+  TxNum uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\ledgermgmt {
+ class closableLedger {
+  id string
+  ledger.PeerLedger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\testutil {
+ class TestRandomNumberGenerator {
+  rand *mathRand.Rand
+  maxNumber int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class CouchDBDef {
+  URL string
+  Username string
+  Password string
+  MaxRetries int
+  MaxRetriesOnStartup int
+  RequestTimeout time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class DBOperationResponse {
+  Ok bool
+  id string
+  rev string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class DBInfo {
+  DbName string
+  UpdateSeq string
+  Sizes struct {   File int   External int   Active int }
+  PurgeSeq int
+  Other struct {   DataSize int }
+  DocDelCount int
+  DocCount int
+  DiskSize int
+  DiskFormatVersion int
+  DataSize int
+  CompactRunning bool
+  InstanceStartTime string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class ConnectionInfo {
+  Couchdb string
+  Version string
+  Vendor struct {   Name string }
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class RangeQueryResponse {
+  TotalRows int
+  Offset int
+  Rows []struct {   ID string   Key string   Value struct {   Rev string }   Doc json.RawMessage }
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class QueryResponse {
+  Warning string
+  Docs []json.RawMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class Doc {
+  ID string
+  Rev string
+  Attachments json.RawMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class DocID {
+  ID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class QueryResult {
+  ID string
+  Value []byte
+  Attachments []*Attachment
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class CouchConnectionDef {
+  URL string
+  Username string
+  Password string
+  MaxRetries int
+  MaxRetriesOnStartup int
+  RequestTimeout time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class CouchInstance {
+  conf CouchConnectionDef
+  client *http.Client
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class CouchDatabase {
+  CouchInstance CouchInstance
+  DBName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class DBReturn {
+  StatusCode int
+  Error string
+  Reason string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class Attachment {
+  Name string
+  ContentType string
+  Length uint64
+  AttachmentBytes []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class DocMetadata {
+  ID string
+  Rev string
+  Version string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class FileDetails {
+  Follows bool
+  ContentType string
+  Length int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class CouchDoc {
+  JSONValue []byte
+  Attachments []*Attachment
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class BatchRetrieveDocMedatadataResponse {
+  Rows []struct {   ID string   Doc struct {   ID string   Rev string   Version string } }
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class BatchUpdateResponse {
+  ID string
+  Error string
+  Reason string
+  Ok bool
+  Rev string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb {
+ class Base64Attachment {
+  ContentType string
+  AttachmentData string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider {
+ class MockCcProviderFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider {
+ class mockCcProviderImpl {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider {
+ class mockCcProviderContextImpl {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\mocks\\txvalidator {
+ class Support {
+  LedgerVal ledger.PeerLedger
+  MSPManagerVal msp.MSPManager
+  ApplyVal error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\mocks\\validator {
+ class MockValidator {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\mocks\\validator {
+ class MockVsccValidator {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\peer {
+ class chainSupport {
+  configtxapi.Manager
+  config.Application
+  ledger ledger.PeerLedger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\peer {
+ class chain {
+  cs *chainSupport
+  cb *common.Block
+  committer committer.Committer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\peer {
+ class channelPolicyManagerGetter {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockChannelPolicyManagerGetter {
+  Managers map[string]policies.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockChannelPolicyManager {
+  MockPolicy policies.Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockPolicy {
+  Deserializer msp.IdentityDeserializer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockIdentityDeserializer {
+  Identity []byte
+  Msg []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockIdentity {
+  identity []byte
+  msg []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockMSPPrincipalGetter {
+  Principal []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy {
+ class policyChecker {
+  channelPolicyManagerGetter policies.ChannelPolicyManagerGetter
+  localMSP msp.IdentityDeserializer
+  principalGetter mgmt.MSPPrincipalGetter
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policyprovider {
+ class defaultFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\cscc {
+ class PeerConfiger {
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\escc {
+ class EndorserOneValidSignature {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\lscc {
+ class LifeCycleSysCC {
+  sccprovider sysccprovider.SystemChaincodeProvider
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\qscc {
+ class LedgerQuerier {
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\samplesyscc {
+ class SampleSysCC {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc {
+ class sccProviderFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc {
+ class sccProviderImpl {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc {
+ class SystemChaincode {
+  Name string
+  Path string
+  InitArgs [][]byte
+  Chaincode shim.Chaincode
+  InvokableExternal bool
+  InvokableCC2CC bool
+  Enabled bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\vscc {
+ class ValidatorOneValidSignature {
+  sccprovider sysccprovider.SystemChaincodeProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\testutil {
+ class Config {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ interface MessageHandler  {
+  HandleMessage(msg *pb.ChaincodeMessage)error
+  SendMessage(msg *pb.ChaincodeMessage)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms {
+ interface Platform  {
+  ValidateSpec(spec *pb.ChaincodeSpec)error
+  ValidateDeploymentSpec(spec *pb.ChaincodeDeploymentSpec)error
+  GetDeploymentPayload(spec *pb.ChaincodeSpec)([]byte,error)
+  GenerateDockerfile(spec *pb.ChaincodeDeploymentSpec)(string,error)
+  GenerateDockerBuild(spec *pb.ChaincodeDeploymentSpec,tw *tar.Writer)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface PeerChaincodeStream  {
+  Send(*pb.ChaincodeMessage)error
+  Recv()(*pb.ChaincodeMessage,error)
+  CloseSend()error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface Chaincode  {
+  Init(stub ChaincodeStubInterface)pb.Response
+  Invoke(stub ChaincodeStubInterface)pb.Response
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface ChaincodeStubInterface  {
+  GetArgs()[][]byte
+  GetStringArgs()[]string
+  GetFunctionAndParameters()(string,[]string)
+  GetArgsSlice()([]byte,error)
+  GetTxID()string
+  InvokeChaincode(chaincodeName string,args [][]byte,channel string)pb.Response
+  GetState(key string)([]byte,error)
+  PutState(key string,value []byte)error
+  DelState(key string)error
+  GetStateByRange(startKey,endKey string)(StateQueryIteratorInterface,error)
+  GetStateByPartialCompositeKey(objectType string,keys []string)(StateQueryIteratorInterface,error)
+  CreateCompositeKey(objectType string,attributes []string)(string,error)
+  SplitCompositeKey(compositeKey string)(string,[]string,error)
+  GetQueryResult(query string)(StateQueryIteratorInterface,error)
+  GetHistoryForKey(key string)(HistoryQueryIteratorInterface,error)
+  GetCreator()([]byte,error)
+  GetTransient()(map[string][]byte,error)
+  GetBinding()([]byte,error)
+  GetSignedProposal()(*pb.SignedProposal,error)
+  GetTxTimestamp()(*timestamp.Timestamp,error)
+  SetEvent(name string,payload []byte)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface CommonIteratorInterface  {
+  HasNext()bool
+  Close()error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface StateQueryIteratorInterface  {
+  Next()(*queryresult.KV,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface HistoryQueryIteratorInterface  {
+  Next()(*queryresult.KeyModification,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface MockQueryIteratorInterface  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ interface ConnectionProducer  {
+  NewConnection()(*grpc.ClientConn,string,error)
+  UpdateEndpoints(endpoints []string)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ interface GRPCServer  {
+  Address()string
+  Start()error
+  Stop()
+  Server()*grpc.Server
+  Listener()net.Listener
+  ServerCertificate()tls.Certificate
+  TLSEnabled()bool
+  AppendClientRootCAs(clientRoots [][]byte)error
+  RemoveClientRootCAs(clientRoots [][]byte)error
+  SetClientRootCAs(clientRoots [][]byte)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ interface TestServiceClient  {
+  EmptyCall(ctx context.Context,in *Empty,opts ... grpc1.CallOption)(*Empty,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ interface TestServiceServer  {
+  EmptyCall(context.Context,*Empty)(*Empty,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer {
+ interface Committer  {
+  Commit(block *common.Block)error
+  LedgerHeight()(uint64,error)
+  GetBlocks(blockSeqs []uint64)[]*common.Block
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ interface Support  {
+  Ledger()ledger.PeerLedger
+  MSPManager()msp.MSPManager
+  Apply(configtx *common.ConfigEnvelope)error
+  GetMSPIDs(cid string)[]string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ interface Validator  {
+  Validate(block *common.Block)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ interface vsccValidator  {
+  VSCCValidateTx(payload *common.Payload,envBytes []byte,env *common.Envelope)(error,peer.TxValidationCode)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface CCPackage  {
+  InitFromBuffer(buf []byte)(*ChaincodeData,error)
+  InitFromFS(ccname string,ccversion string)([]byte,*pb.ChaincodeDeploymentSpec,error)
+  PutChaincodeToFS()error
+  GetDepSpec()*pb.ChaincodeDeploymentSpec
+  GetDepSpecBytes()[]byte
+  ValidateCC(ccdata *ChaincodeData)error
+  GetPackageObject()proto.Message
+  GetChaincodeData()*ChaincodeData
+  GetId()[]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface CCCacheSupport  {
+  GetChaincode(ccname string,ccversion string)(CCPackage,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface ChaincodeProvider  {
+  GetContext(ledger ledger.PeerLedger)(context.Context,error)
+  GetCCContext(cid,name,version,txid string,syscc bool,signedProp *pb.SignedProposal,prop *pb.Proposal)interface  { }
+  GetCCValidationInfoFromLSCC(ctxt context.Context,txid string,signedProp *pb.SignedProposal,prop *pb.Proposal,chainID string,chaincodeID string)(string,[]byte,error)
+  ExecuteChaincode(ctxt context.Context,cccid interface  { },args [][]byte)(*pb.Response,*pb.ChaincodeEvent,error)
+  Execute(ctxt context.Context,cccid interface  { },spec interface  { })(*pb.Response,*pb.ChaincodeEvent,error)
+  ExecuteWithErrorFilter(ctxt context.Context,cccid interface  { },spec interface  { })([]byte,*pb.ChaincodeEvent,error)
+  Stop(ctxt context.Context,cccid interface  { },spec *pb.ChaincodeDeploymentSpec)error
+  ReleaseContext()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface ChaincodeProviderFactory  {
+  NewChaincodeProvider()ChaincodeProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\sysccprovider {
+ interface SystemChaincodeProvider  {
+  IsSysCC(name string)bool
+  IsSysCCAndNotInvokableCC2CC(name string)bool
+  IsSysCCAndNotInvokableExternal(name string)bool
+  GetQueryExecutorForLedger(cid string)(ledger.QueryExecutor,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\sysccprovider {
+ interface SystemChaincodeProviderFactory  {
+  NewSystemChaincodeProvider()SystemChaincodeProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\api {
+ interface VM  {
+  Deploy(ctxt context.Context,ccid ccintf.CCID,args []string,env []string,reader io.Reader)error
+  Start(ctxt context.Context,ccid ccintf.CCID,args []string,env []string,builder BuildSpecFactory,preLaunchFunc PrelaunchFunc)error
+  Stop(ctxt context.Context,ccid ccintf.CCID,timeout uint,dontkill bool,dontremove bool)error
+  Destroy(ctxt context.Context,ccid ccintf.CCID,force bool,noprune bool)error
+  GetVMName(ccID ccintf.CCID)(string,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\ccintf {
+ interface ChaincodeStream  {
+  Send(*pb.ChaincodeMessage)error
+  Recv()(*pb.ChaincodeMessage,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\ccintf {
+ interface CCSupport  {
+  HandleChaincodeStream(context.Context,ChaincodeStream)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container {
+ interface VMCReqIntf  {
+  do(ctxt context.Context,v api.VM)VMCResp
+  getCCID()ccintf.CCID
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\container\\dockercontroller {
+ interface dockerClient  {
+  CreateContainer(opts docker.CreateContainerOptions)(*docker.Container,error)
+  StartContainer(id string,cfg *docker.HostConfig)error
+  AttachToContainer(opts docker.AttachToContainerOptions)error
+  BuildImage(opts docker.BuildImageOptions)error
+  RemoveImageExtended(id string,opts docker.RemoveImageOptions)error
+  StopContainer(id string,timeout uint)error
+  KillContainer(opts docker.KillContainerOptions)error
+  RemoveContainer(opts docker.RemoveContainerOptions)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider {
+ interface LedgerInfo  {
+  LedgerHeight()(uint64,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider {
+ interface GossipServiceAdapter  {
+  PeersOfChannel(gossipcommon.ChainID)[]discovery.NetworkMember
+  AddPayload(chainID string,payload *gossip_proto.Payload)error
+  Gossip(msg *gossip_proto.GossipMessage)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider {
+ interface BlocksProvider  {
+  DeliverBlocks()
+  Stop()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider {
+ interface BlocksDeliverer  {
+  Recv()(*orderer.DeliverResponse,error)
+  Send(*common.Envelope)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider {
+ interface streamClient  {
+  Close()
+  Disconnect()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\deliverservice {
+ interface DeliverService  {
+  StartDeliverForChannel(chainID string,ledgerInfo blocksprovider.LedgerInfo)error
+  StopDeliverForChannel(chainID string)error
+  Stop()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb {
+ interface HistoryDBProvider  {
+  GetDBHandle(id string)(HistoryDB,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb {
+ interface HistoryDB  {
+  NewHistoryQueryExecutor(blockStore blkstorage.BlockStore)(ledger.HistoryQueryExecutor,error)
+  Commit(block *common.Block)error
+  GetLastSavepoint()(*version.Height,error)
+  ShouldRecover(lastAvailableBlock uint64)(bool,uint64,error)
+  CommitLostBlock(block *common.Block)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger {
+ interface recoverable  {
+  ShouldRecover(lastAvailableBlock uint64)(bool,uint64,error)
+  CommitLostBlock(block *common.Block)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ interface VersionedDBProvider  {
+  GetDBHandle(id string)(VersionedDB,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ interface VersionedDB  {
+  GetState(namespace string,key string)(*VersionedValue,error)
+  GetStateMultipleKeys(namespace string,keys []string)([]*VersionedValue,error)
+  GetStateRangeScanIterator(namespace string,startKey string,endKey string)(ResultsIterator,error)
+  ExecuteQuery(namespace,query string)(ResultsIterator,error)
+  ApplyUpdates(batch *UpdateBatch,height *version.Height)error
+  GetLatestSavePoint()(*version.Height,error)
+  ValidateKey(key string)error
+  Open()error
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ interface ResultsIterator  {
+  Next()(QueryResult,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb {
+ interface QueryResult  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr {
+ interface TxMgr  {
+  NewQueryExecutor()(ledger.QueryExecutor,error)
+  NewTxSimulator()(ledger.TxSimulator,error)
+  ValidateAndPrepare(block *common.Block,doMVCCValidation bool)error
+  GetLastSavepoint()(*version.Height,error)
+  ShouldRecover(lastAvailableBlock uint64)(bool,uint64,error)
+  CommitLostBlock(block *common.Block)error
+  Commit()error
+  Rollback()
+  Shutdown()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval {
+ interface rangeQueryValidator  {
+  init(rqInfo *kvrwset.RangeQueryInfo,itr statedb.ResultsIterator)error
+  validate()(bool,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator {
+ interface Validator  {
+  ValidateAndPrepareBatch(block *common.Block,doMVCCValidation bool)(*statedb.UpdateBatch,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger {
+ interface PeerLedgerProvider  {
+  Create(genesisBlock *common.Block)(PeerLedger,error)
+  Open(ledgerID string)(PeerLedger,error)
+  Exists(ledgerID string)(bool,error)
+  List()([]string,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger {
+ interface PeerLedger  {
+  GetTransactionByID(txID string)(*peer.ProcessedTransaction,error)
+  GetBlockByHash(blockHash []byte)(*common.Block,error)
+  GetBlockByTxID(txID string)(*common.Block,error)
+  GetTxValidationCodeByTxID(txID string)(peer.TxValidationCode,error)
+  NewTxSimulator()(TxSimulator,error)
+  NewQueryExecutor()(QueryExecutor,error)
+  NewHistoryQueryExecutor()(HistoryQueryExecutor,error)
+  Prune(policy commonledger.PrunePolicy)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger {
+ interface ValidatedLedger  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger {
+ interface QueryExecutor  {
+  GetState(namespace string,key string)([]byte,error)
+  GetStateMultipleKeys(namespace string,keys []string)([][]byte,error)
+  GetStateRangeScanIterator(namespace string,startKey string,endKey string)(commonledger.ResultsIterator,error)
+  ExecuteQuery(namespace,query string)(commonledger.ResultsIterator,error)
+  Done()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger {
+ interface HistoryQueryExecutor  {
+  GetHistoryForKey(namespace string,key string)(commonledger.ResultsIterator,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\ledger {
+ interface TxSimulator  {
+  SetState(namespace string,key string,value []byte)error
+  DeleteState(namespace string,key string)error
+  SetStateMultipleKeys(namespace string,kvs map[string][]byte)error
+  ExecuteUpdate(query string)error
+  GetTxSimulationResults()([]byte,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy {
+ interface PolicyChecker  {
+  CheckPolicy(channelID,policyName string,signedProp *pb.SignedProposal)error
+  CheckPolicyBySignedData(channelID,policyName string,sd []*common.SignedData)error
+  CheckPolicyNoChannel(policyName string,signedProp *pb.SignedProposal)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy {
+ interface PolicyCheckerFactory  {
+  NewPolicyChecker()PolicyChecker
+}
+}
+github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderContextImpl ---> github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCContext : ctx
+github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv ---> github.com\\hyperledger\\fabric\\core\\chaincode.Handler : handler
+github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes ---> "*" github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv : chaincodeMap
+github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport ---> github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes : runningChaincodes
+github.com\\hyperledger\\fabric\\core\\chaincode.Handler ---> github.com\\hyperledger\\fabric\\core\\common\\sysccprovider.ChaincodeInstance : ccInstance
+github.com\\hyperledger\\fabric\\core\\chaincode.Handler ---> github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport : chaincodeSupport
+github.com\\hyperledger\\fabric\\core\\chaincode.Handler ---> "*" github.com\\hyperledger\\fabric\\core\\chaincode.transactionContext : txCtxs
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub ---> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler : handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator ---> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler : handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator -|> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator -|> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub ---> "*" github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub : Invokables
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator ---> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub : Stub
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ccInfoCacheImpl ---> "*" github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeData : cache
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSPackage ---> github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSData : data
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSPackage ---> github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSData : data
+github.com\\hyperledger\\fabric\\core\\container.VMController ---> "*" github.com\\hyperledger\\fabric\\core\\container.refCountedLock : containerLocks
+github.com\\hyperledger\\fabric\\core\\container.CreateImageReq -|> github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCID
+github.com\\hyperledger\\fabric\\core\\container.StartImageReq -|> github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCID
+github.com\\hyperledger\\fabric\\core\\container.StopImageReq -|> github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCID
+github.com\\hyperledger\\fabric\\core\\container.DestroyImageReq -|> github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCID
+github.com\\hyperledger\\fabric\\core\\deliverservice.broadcastClient ---> github.com\\hyperledger\\fabric\\core\\deliverservice.connection : conn
+github.com\\hyperledger\\fabric\\core\\deliverservice.deliverServiceImpl ---> github.com\\hyperledger\\fabric\\core\\deliverservice.Config : conf
+github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockAtomicBroadcastClient ---> github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockBlocksDeliverer : BD
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.LevelHistoryDBQueryExecutor ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyDB : historyDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.Provider ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.idStore : idStore
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RangeQueryResultsHelper ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.merkleTree : mt
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.nsRWs ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.rangeQueryKey : rangeQueriesKeys
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.nsRWs : rwMap
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.TxRwSet ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.NsRwSet : NsRwSets
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDBProvider ---> github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchInstance : couchInstance
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDBProvider ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDB : databases
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDB ---> github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDatabase : db
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.kvScanner ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResult : results
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.queryScanner ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResult : results
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedValue ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\version.Height : Version
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedKV -|> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.CompositeKey
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedKV -|> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedValue
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsUpdates ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedValue : m
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.UpdateBatch ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsUpdates : updates
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsIterator ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsUpdates : nsUpdates
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryHelper ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.LockBasedTxMgr : txmgr
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryHelper ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder : rwsetBuilder
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryHelper ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.resultsItr : itrs
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.resultsItr ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder : rwSetBuilder
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.resultsItr ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RangeQueryResultsHelper : rangeQueryResultsHelper
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryResultsItr ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder : RWSetBuilder
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedQueryExecutor ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryHelper : helper
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedTxSimulator -|> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedQueryExecutor
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedTxSimulator ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder : rwsetBuilder
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.LockBasedTxMgr ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.UpdateBatch : batch
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.combinedIterator ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.UpdateBatch : updates
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryHashValidator ---> github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RangeQueryResultsHelper : resultsHelper
+github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResult ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Attachment : Attachments
+github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchInstance ---> github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchConnectionDef : conf
+github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDatabase ---> github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchInstance : CouchInstance
+github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDoc ---> "*" github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Attachment : Attachments
+github.com\\hyperledger\\fabric\\core\\peer.chain ---> github.com\\hyperledger\\fabric\\core\\peer.chainSupport : cs
+github.com\\hyperledger\\fabric\\core\\chaincode\\platforms.Platform <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\platforms.Platform <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\platforms.Platform <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.PeerChaincodeStream <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.inProcStream
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Chaincode <|- github.com\\hyperledger\\fabric\\core\\scc\\cscc.PeerConfiger
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Chaincode <|- github.com\\hyperledger\\fabric\\core\\scc\\escc.EndorserOneValidSignature
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Chaincode <|- github.com\\hyperledger\\fabric\\core\\scc\\lscc.LifeCycleSysCC
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Chaincode <|- github.com\\hyperledger\\fabric\\core\\scc\\qscc.LedgerQuerier
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Chaincode <|- github.com\\hyperledger\\fabric\\core\\scc\\samplesyscc.SampleSysCC
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Chaincode <|- github.com\\hyperledger\\fabric\\core\\scc\\vscc.ValidatorOneValidSignature
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStubInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStubInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core.ServerAdmin
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderFactory
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderContextImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.DuplicateChaincodeHandlerError
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.transactionContext
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.Handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.CodeDescriptor
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.SourceDescriptor
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\util.DockerBuildOptions
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeLogger
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.inProcStream
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm.KeepaliveOptions
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm.CASupport
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm.serverCreds
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm.connProducer
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm.SecureServerConfig
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm.grpcServerImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.Empty
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.testServiceClient
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\committer.LedgerCommitter
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidatorImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.txValidator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ccInfoCacheImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCInfoFSImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCContext
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeData
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSData
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSPackage
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSData
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSPackage
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\common\\sysccprovider.ChaincodeInstance
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCID
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.refCountedLock
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.VMController
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.VMCResp
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.CreateImageReq
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.StartImageReq
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.StopImageReq
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.DestroyImageReq
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container\\dockercontroller.DockerVM
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.inprocContainer
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.InprocVM
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.inProcStream
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\container.VM
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.blocksProviderImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice.broadcastClient
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice.connection
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice.deliverServiceImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice.Config
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockGossipServiceAdapter
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockAtomicBroadcastClient
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockBlocksDeliverer
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockLedgerInfo
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.Orderer
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\deliverservice.blocksRequester
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\endorser.chaincodeError
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\endorser.Endorser
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core.PeerConnectionFSM
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.App
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Committer
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Consenter
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.MarbleApp
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Marble
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.HistoryDBProvider
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyDB
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.LevelHistoryDBQueryExecutor
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyScanner
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.kvLedger
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.Provider
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.idStore
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.recoverer
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RangeQueryResultsHelper
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.merkleTree
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.nsRWs
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.rangeQueryKey
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.TxRwSet
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.NsRwSet
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDB
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.couchSavepointData
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.kvScanner
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.queryScanner
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.TestVDBEnv
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.CompositeKey
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedValue
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedKV
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsUpdates
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.UpdateBatch
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.versionedDB
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.kvScanner
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.TestVDBEnv
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryHelper
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.resultsItr
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryResultsItr
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedQueryExecutor
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedTxSimulator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.LockBasedTxMgr
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.combinedIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryResultsValidator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryHashValidator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.Validator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\version.Height
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\ledgermgmt.closableLedger
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\testutil.TestRandomNumberGenerator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDBDef
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBOperationResponse
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBInfo
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.ConnectionInfo
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.RangeQueryResponse
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResponse
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Doc
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DocID
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResult
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchConnectionDef
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchInstance
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDatabase
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBReturn
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Attachment
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DocMetadata
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.FileDetails
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDoc
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.BatchRetrieveDocMedatadataResponse
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.BatchUpdateResponse
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Base64Attachment
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.MockCcProviderFactory
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.mockCcProviderImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.mockCcProviderContextImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\mocks\\txvalidator.Support
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockValidator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockVsccValidator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\peer.chainSupport
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\peer.chain
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\peer.channelPolicyManagerGetter
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockChannelPolicyManagerGetter
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockChannelPolicyManager
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockPolicy
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockIdentityDeserializer
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockIdentity
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockMSPPrincipalGetter
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policy.policyChecker
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\policyprovider.defaultFactory
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc\\cscc.PeerConfiger
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc\\escc.EndorserOneValidSignature
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc\\lscc.LifeCycleSysCC
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc\\qscc.LedgerQuerier
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc\\samplesyscc.SampleSysCC
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderFactory
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc.SystemChaincode
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\scc\\vscc.ValidatorOneValidSignature
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\testutil.Config
+github.com\\hyperledger\\fabric\\core\\comm.ConnectionProducer <|- github.com\\hyperledger\\fabric\\core\\comm.connProducer
+github.com\\hyperledger\\fabric\\core\\comm.GRPCServer <|- github.com\\hyperledger\\fabric\\core\\comm.grpcServerImpl
+github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.TestServiceClient <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.testServiceClient
+github.com\\hyperledger\\fabric\\core\\committer.Committer <|- github.com\\hyperledger\\fabric\\core\\committer.LedgerCommitter
+github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.Support <|- github.com\\hyperledger\\fabric\\core\\mocks\\txvalidator.Support
+github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.Validator <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.txValidator
+github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.Validator <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockValidator
+github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidator <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidatorImpl
+github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidator <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockVsccValidator
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCPackage <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSPackage
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCPackage <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSPackage
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCCacheSupport <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCInfoFSImpl
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeProvider <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderImpl
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeProvider <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.mockCcProviderImpl
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeProviderFactory <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderFactory
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeProviderFactory <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.MockCcProviderFactory
+github.com\\hyperledger\\fabric\\core\\common\\sysccprovider.SystemChaincodeProvider <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderImpl
+github.com\\hyperledger\\fabric\\core\\common\\sysccprovider.SystemChaincodeProviderFactory <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderFactory
+github.com\\hyperledger\\fabric\\core\\container\\ccintf.ChaincodeStream <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.inProcStream
+github.com\\hyperledger\\fabric\\core\\container\\ccintf.ChaincodeStream <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.inProcStream
+github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCSupport <|- github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport
+github.com\\hyperledger\\fabric\\core\\container.VMCReqIntf <|- github.com\\hyperledger\\fabric\\core\\container.CreateImageReq
+github.com\\hyperledger\\fabric\\core\\container.VMCReqIntf <|- github.com\\hyperledger\\fabric\\core\\container.StartImageReq
+github.com\\hyperledger\\fabric\\core\\container.VMCReqIntf <|- github.com\\hyperledger\\fabric\\core\\container.StopImageReq
+github.com\\hyperledger\\fabric\\core\\container.VMCReqIntf <|- github.com\\hyperledger\\fabric\\core\\container.DestroyImageReq
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.LedgerInfo <|- github.com\\hyperledger\\fabric\\core\\committer.LedgerCommitter
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.LedgerInfo <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockLedgerInfo
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.GossipServiceAdapter <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockGossipServiceAdapter
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.BlocksProvider <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.blocksProviderImpl
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.BlocksDeliverer <|- github.com\\hyperledger\\fabric\\core\\deliverservice.broadcastClient
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.BlocksDeliverer <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockBlocksDeliverer
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.streamClient <|- github.com\\hyperledger\\fabric\\core\\deliverservice.broadcastClient
+github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.streamClient <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockBlocksDeliverer
+github.com\\hyperledger\\fabric\\core\\deliverservice.DeliverService <|- github.com\\hyperledger\\fabric\\core\\deliverservice.deliverServiceImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb.HistoryDBProvider <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.HistoryDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb.HistoryDB <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.recoverable <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.recoverable <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.LockBasedTxMgr
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedDBProvider <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedDBProvider <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedDB <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedDB <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.versionedDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.ResultsIterator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.kvScanner
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.ResultsIterator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.queryScanner
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.ResultsIterator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.ResultsIterator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.kvScanner
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.ResultsIterator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.combinedIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core.ServerAdmin
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderFactory
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderContextImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.DuplicateChaincodeHandlerError
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.transactionContext
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode.Handler
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car.Platform
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.CodeDescriptor
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.SourceDescriptor
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.Platform
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java.Platform
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\util.DockerBuildOptions
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeLogger
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.inProcStream
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm.KeepaliveOptions
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm.CASupport
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm.serverCreds
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm.connProducer
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm.SecureServerConfig
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm.grpcServerImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.Empty
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.testServiceClient
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\committer.LedgerCommitter
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidatorImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.txValidator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ccInfoCacheImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCInfoFSImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCContext
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeData
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSData
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSPackage
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSData
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSPackage
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\common\\sysccprovider.ChaincodeInstance
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCID
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.refCountedLock
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.VMController
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.VMCResp
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.CreateImageReq
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.StartImageReq
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.StopImageReq
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.DestroyImageReq
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container\\dockercontroller.DockerVM
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.inprocContainer
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.InprocVM
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.inProcStream
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\container.VM
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.blocksProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice.broadcastClient
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice.connection
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice.deliverServiceImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice.Config
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockGossipServiceAdapter
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockAtomicBroadcastClient
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockBlocksDeliverer
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockLedgerInfo
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.Orderer
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\deliverservice.blocksRequester
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\endorser.chaincodeError
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\endorser.Endorser
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core.PeerConnectionFSM
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.App
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Committer
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Consenter
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.MarbleApp
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Marble
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.HistoryDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.LevelHistoryDBQueryExecutor
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyScanner
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.kvLedger
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.Provider
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.idStore
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.recoverer
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RangeQueryResultsHelper
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.merkleTree
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.nsRWs
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.rangeQueryKey
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.TxRwSet
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.NsRwSet
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.couchSavepointData
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.kvScanner
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.queryScanner
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.TestVDBEnv
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.CompositeKey
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedValue
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedKV
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsUpdates
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.UpdateBatch
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.versionedDB
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.kvScanner
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.TestVDBEnv
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryHelper
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.resultsItr
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryResultsItr
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedQueryExecutor
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedTxSimulator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.LockBasedTxMgr
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.combinedIterator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryResultsValidator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryHashValidator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.Validator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\version.Height
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\ledgermgmt.closableLedger
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\testutil.TestRandomNumberGenerator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDBDef
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBOperationResponse
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBInfo
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.ConnectionInfo
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.RangeQueryResponse
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResponse
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Doc
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DocID
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResult
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchConnectionDef
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchInstance
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDatabase
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBReturn
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Attachment
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DocMetadata
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.FileDetails
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDoc
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.BatchRetrieveDocMedatadataResponse
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.BatchUpdateResponse
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Base64Attachment
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.MockCcProviderFactory
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.mockCcProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.mockCcProviderContextImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\mocks\\txvalidator.Support
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockValidator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockVsccValidator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\peer.chainSupport
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\peer.chain
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\peer.channelPolicyManagerGetter
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockChannelPolicyManagerGetter
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockChannelPolicyManager
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockPolicy
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockIdentityDeserializer
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockIdentity
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockMSPPrincipalGetter
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policy.policyChecker
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\policyprovider.defaultFactory
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc\\cscc.PeerConfiger
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc\\escc.EndorserOneValidSignature
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc\\lscc.LifeCycleSysCC
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc\\qscc.LedgerQuerier
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc\\samplesyscc.SampleSysCC
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderFactory
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc.SystemChaincode
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\scc\\vscc.ValidatorOneValidSignature
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.QueryResult <|- github.com\\hyperledger\\fabric\\core\\testutil.Config
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr.TxMgr <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.LockBasedTxMgr
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryValidator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryResultsValidator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryValidator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryHashValidator
+github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator.Validator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.Validator
+github.com\\hyperledger\\fabric\\core\\ledger.PeerLedgerProvider <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.Provider
+github.com\\hyperledger\\fabric\\core\\ledger.PeerLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.kvLedger
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core.ServerAdmin
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderFactory
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderContextImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.DuplicateChaincodeHandlerError
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.transactionContext
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode.Handler
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car.Platform
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.CodeDescriptor
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.SourceDescriptor
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.Platform
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java.Platform
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\util.DockerBuildOptions
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeLogger
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.inProcStream
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm.KeepaliveOptions
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm.CASupport
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm.serverCreds
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm.connProducer
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm.SecureServerConfig
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm.grpcServerImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.Empty
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.testServiceClient
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\committer.LedgerCommitter
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidatorImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.txValidator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ccInfoCacheImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCInfoFSImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCContext
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeData
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSData
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSPackage
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSData
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSPackage
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\common\\sysccprovider.ChaincodeInstance
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container\\ccintf.CCID
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.refCountedLock
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.VMController
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.VMCResp
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.CreateImageReq
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.StartImageReq
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.StopImageReq
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.DestroyImageReq
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container\\dockercontroller.DockerVM
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.inprocContainer
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.InprocVM
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container\\inproccontroller.inProcStream
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\container.VM
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\blocksprovider.blocksProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice.broadcastClient
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice.connection
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice.deliverServiceImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice.Config
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockGossipServiceAdapter
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockAtomicBroadcastClient
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockBlocksDeliverer
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.MockLedgerInfo
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice\\mocks.Orderer
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\deliverservice.blocksRequester
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\endorser.chaincodeError
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\endorser.Endorser
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core.PeerConnectionFSM
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.App
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Committer
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Consenter
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.MarbleApp
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\example.Marble
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.HistoryDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyDB
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.LevelHistoryDBQueryExecutor
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.historyScanner
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.kvLedger
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.Provider
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.idStore
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger.recoverer
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RangeQueryResultsHelper
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.merkleTree
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.nsRWs
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.rangeQueryKey
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.RWSetBuilder
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.TxRwSet
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\rwsetutil.NsRwSet
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.VersionedDB
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.couchSavepointData
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.kvScanner
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.queryScanner
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\statecouchdb.TestVDBEnv
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.CompositeKey
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedValue
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.VersionedKV
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsUpdates
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.UpdateBatch
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb.nsIterator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.VersionedDBProvider
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.versionedDB
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.kvScanner
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\statedb\\stateleveldb.TestVDBEnv
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryHelper
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.resultsItr
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.queryResultsItr
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedQueryExecutor
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedTxSimulator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.LockBasedTxMgr
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.combinedIterator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryResultsValidator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.rangeQueryHashValidator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\validator\\statebasedval.Validator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\version.Height
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\ledgermgmt.closableLedger
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\testutil.TestRandomNumberGenerator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDBDef
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBOperationResponse
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBInfo
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.ConnectionInfo
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.RangeQueryResponse
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResponse
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Doc
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DocID
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.QueryResult
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchConnectionDef
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchInstance
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDatabase
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DBReturn
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Attachment
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.DocMetadata
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.FileDetails
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.CouchDoc
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.BatchRetrieveDocMedatadataResponse
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.BatchUpdateResponse
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\ledger\\util\\couchdb.Base64Attachment
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.MockCcProviderFactory
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.mockCcProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\mocks\\ccprovider.mockCcProviderContextImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\mocks\\txvalidator.Support
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockValidator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\mocks\\validator.MockVsccValidator
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\peer.chainSupport
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\peer.chain
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\peer.channelPolicyManagerGetter
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockChannelPolicyManagerGetter
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockChannelPolicyManager
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockPolicy
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockIdentityDeserializer
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockIdentity
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policy\\mocks.MockMSPPrincipalGetter
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policy.policyChecker
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\policyprovider.defaultFactory
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc\\cscc.PeerConfiger
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc\\escc.EndorserOneValidSignature
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc\\lscc.LifeCycleSysCC
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc\\qscc.LedgerQuerier
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc\\samplesyscc.SampleSysCC
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderFactory
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc.sccProviderImpl
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc.SystemChaincode
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\scc\\vscc.ValidatorOneValidSignature
+github.com\\hyperledger\\fabric\\core\\ledger.ValidatedLedger <|- github.com\\hyperledger\\fabric\\core\\testutil.Config
+github.com\\hyperledger\\fabric\\core\\ledger.QueryExecutor <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedQueryExecutor
+github.com\\hyperledger\\fabric\\core\\ledger.HistoryQueryExecutor <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\history\\historydb\\historyleveldb.LevelHistoryDBQueryExecutor
+github.com\\hyperledger\\fabric\\core\\ledger.TxSimulator <|- github.com\\hyperledger\\fabric\\core\\ledger\\kvledger\\txmgmt\\txmgr\\lockbasedtxmgr.lockBasedTxSimulator
+github.com\\hyperledger\\fabric\\core\\policy.PolicyChecker <|- github.com\\hyperledger\\fabric\\core\\policy.policyChecker
+github.com\\hyperledger\\fabric\\core\\policy.PolicyCheckerFactory <|- github.com\\hyperledger\\fabric\\core\\policyprovider.defaultFactory
+@enduml

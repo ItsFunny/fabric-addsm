@@ -1,0 +1,21 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core\\peer {
+ class chainSupport {
+  configtxapi.Manager
+  config.Application
+  ledger ledger.PeerLedger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\peer {
+ class chain {
+  cs *chainSupport
+  cb *common.Block
+  committer committer.Committer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\peer {
+ class channelPolicyManagerGetter {
+}
+}
+github.com\\hyperledger\\fabric\\core\\peer.chain ---> github.com\\hyperledger\\fabric\\core\\peer.chainSupport : cs
+@enduml

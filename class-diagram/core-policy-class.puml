@@ -1,0 +1,54 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockChannelPolicyManagerGetter {
+  Managers map[string]policies.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockChannelPolicyManager {
+  MockPolicy policies.Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockPolicy {
+  Deserializer msp.IdentityDeserializer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockIdentityDeserializer {
+  Identity []byte
+  Msg []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockIdentity {
+  identity []byte
+  msg []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy\\mocks {
+ class MockMSPPrincipalGetter {
+  Principal []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy {
+ class policyChecker {
+  channelPolicyManagerGetter policies.ChannelPolicyManagerGetter
+  localMSP msp.IdentityDeserializer
+  principalGetter mgmt.MSPPrincipalGetter
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy {
+ interface PolicyChecker  {
+  CheckPolicy(channelID,policyName string,signedProp *pb.SignedProposal)error
+  CheckPolicyBySignedData(channelID,policyName string,sd []*common.SignedData)error
+  CheckPolicyNoChannel(policyName string,signedProp *pb.SignedProposal)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\policy {
+ interface PolicyCheckerFactory  {
+  NewPolicyChecker()PolicyChecker
+}
+}
+github.com\\hyperledger\\fabric\\core\\policy.PolicyChecker <|- github.com\\hyperledger\\fabric\\core\\policy.policyChecker
+@enduml

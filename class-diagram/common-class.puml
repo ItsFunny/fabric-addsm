@@ -1,0 +1,1906 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\common\\cauthdsl {
+ class provider {
+  deserializer msp.IdentityDeserializer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\cauthdsl {
+ class policy {
+  evaluator func([]*cb.SignedData,[]bool)bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\cauthdsl {
+ class context {
+  IDNum int
+  principals []*msp.MSPPrincipal
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationGroup {
+  *Proposer
+  *ApplicationConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationConfig {
+  *standardValues
+  applicationGroup *ApplicationGroup
+  applicationOrgs map[string]ApplicationOrg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationOrgProtos {
+  AnchorPeers *pb.AnchorPeers
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationOrgConfig {
+  *OrganizationConfig
+  protos *ApplicationOrgProtos
+  applicationOrgGroup *ApplicationOrgGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationOrgGroup {
+  *Proposer
+  *OrganizationGroup
+  *ApplicationOrgConfig
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ChannelProtos {
+  HashingAlgorithm *cb.HashingAlgorithm
+  BlockDataHashingStructure *cb.BlockDataHashingStructure
+  OrdererAddresses *cb.OrdererAddresses
+  Consortium *cb.Consortium
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class channelConfigSetter {
+  target **ChannelConfig
+  *ChannelConfig
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ChannelGroup {
+  *ChannelConfig
+  *Proposer
+  mspConfigHandler *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ChannelConfig {
+  *standardValues
+  protos *ChannelProtos
+  hashingAlgorithm func(input []byte)[]byte
+  appConfig *ApplicationGroup
+  ordererConfig *OrdererGroup
+  consortiumsConfig *ConsortiumsGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumProtos {
+  ChannelCreationPolicy *cb.Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumGroup {
+  *Proposer
+  *ConsortiumConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumConfig {
+  *standardValues
+  protos *ConsortiumProtos
+  orgs map[string]*OrganizationGroup
+  consortiumGroup *ConsortiumGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumsGroup {
+  *Proposer
+  *ConsortiumsConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumsConfig {
+  *standardValues
+  consortiums map[string]Consortium
+  consortiumsGroup *ConsortiumsGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config\\msp {
+ class pendingMSPConfig {
+  mspConfig *mspprotos.MSPConfig
+  msp msp.MSP
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config\\msp {
+ class mspConfigStore {
+  idMap map[string]*pendingMSPConfig
+  proposedMgr msp.MSPManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config\\msp {
+ class MSPConfigHandler {
+  pendingConfig map[interface  { }]*mspConfigStore
+  pendingLock sync.RWMutex
+  msp.MSPManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrdererProtos {
+  ConsensusType *ab.ConsensusType
+  BatchSize *ab.BatchSize
+  BatchTimeout *ab.BatchTimeout
+  KafkaBrokers *ab.KafkaBrokers
+  ChannelRestrictions *ab.ChannelRestrictions
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrdererGroup {
+  *Proposer
+  *OrdererConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrdererConfig {
+  *standardValues
+  protos *OrdererProtos
+  ordererGroup *OrdererGroup
+  orgs map[string]Org
+  batchTimeout time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrganizationProtos {
+  MSP *mspprotos.MSPConfig
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrganizationConfig {
+  *standardValues
+  protos *OrganizationProtos
+  organizationGroup *OrganizationGroup
+  msp msp.MSP
+  mspID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrganizationGroup {
+  *Proposer
+  *OrganizationConfig
+  name string
+  mspConfigHandler *mspconfig.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class config {
+  allocated Values
+  groups map[string]ValueProposer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class Proposer {
+  vh Handler
+  pending map[interface  { }]*config
+  current *config
+  pendingLock sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class Root {
+  channel *ChannelGroup
+  mspConfigHandler *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class failDeserializer {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class standardValues {
+  lookup map[string]proto.Message
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class comparable {
+  *cb.ConfigGroup
+  *cb.ConfigValue
+  *cb.ConfigPolicy
+  key string
+  path []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class configResult {
+  tx interface  { }
+  groupName string
+  groupKey string
+  group *cb.ConfigGroup
+  valueHandler config.ValueProposer
+  policyHandler policies.Proposer
+  subResults []*configResult
+  deserializedValues map[string]proto.Message
+  deserializedPolicies map[string]proto.Message
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class resources {
+  policyManager *policies.ManagerImpl
+  configRoot *config.Root
+  mspConfigHandler *configtxmsp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class policyProposerRoot {
+  policyManager policies.Proposer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class initializer {
+  *resources
+  ppr *policyProposerRoot
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class configSet {
+  channelID string
+  sequence uint64
+  configMap map[string]comparable
+  configEnv *cb.ConfigEnvelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class configManager {
+  api.Resources
+  callOnUpdate []func(api.Manager)
+  initializer api.Initializer
+  current *configSet
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class simpleTemplate {
+  configGroup *cb.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class compositeTemplate {
+  templates []Template
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class modPolicySettingTemplate {
+  modPolicy string
+  template Template
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class channelCreationTemplate {
+  consortiumName string
+  orgs []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class TopLevel {
+  Profiles map[string]*Profile
+  Organizations []*Organization
+  Application *Application
+  Orderer *Orderer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Profile {
+  Consortium string
+  Application *Application
+  Orderer *Orderer
+  Consortiums map[string]*Consortium
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Consortium {
+  Organizations []*Organization
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Application {
+  Organizations []*Organization
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Organization {
+  Name string
+  ID string
+  MSPDir string
+  AdminPrincipal string
+  AnchorPeers []*AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class AnchorPeer {
+  Host string
+  Port int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class ApplicationOrganization {
+  Organization
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Orderer {
+  OrdererType string
+  Addresses []string
+  BatchTimeout time.Duration
+  BatchSize BatchSize
+  Kafka Kafka
+  Organizations []*Organization
+  MaxChannels uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class BatchSize {
+  MaxMessageCount uint32
+  AbsoluteMaxBytes uint32
+  PreferredMaxBytes uint32
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Kafka {
+  Brokers []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional {
+ class bootstrapper {
+  channelGroups []*cb.ConfigGroup
+  ordererGroups []*cb.ConfigGroup
+  applicationGroups []*cb.ConfigGroup
+  consortiumsGroups []*cb.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\errors {
+ class callError {
+  stack callstack
+  componentcode string
+  reasoncode string
+  message string
+  args []interface  { }
+  stackGetter func(callstack)string
+  prevErr error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\flogging {
+ class grpclogger {
+  logger *logging.Logger
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\genesis {
+ class factory {
+  template configtx.Template
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage {
+ class IndexConfig {
+  AttrsToIndex []IndexableAttr
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class serializedBlockInfo {
+  blockHeader *common.BlockHeader
+  txOffsets []*txindexInfo
+  metadata *common.BlockMetadata
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class txindexInfo {
+  txID string
+  loc *locPointer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileStream {
+  fileNum int
+  file *os.File
+  reader *bufio.Reader
+  currentOffset int64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockStream {
+  rootDir string
+  currentFileNum int
+  endFileNum int
+  currentFileStream *blockfileStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockPlacementInfo {
+  fileNum int
+  blockStartOffset int64
+  blockBytesOffset int64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileMgr {
+  rootDir string
+  conf *Conf
+  db *leveldbhelper.DBHandle
+  index index
+  cpInfo *checkpointInfo
+  cpInfoCond *sync.Cond
+  currentFileWriter *blockfileWriter
+  bcInfo atomic.Value
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class checkpointInfo {
+  latestFileChunkSuffixNum int
+  latestFileChunksize int
+  isChainEmpty bool
+  lastBlockNumber uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileWriter {
+  filePath string
+  file *os.File
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileReader {
+  file *os.File
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockIdxInfo {
+  blockNum uint64
+  blockHash []byte
+  flp *fileLocPointer
+  txOffsets []*txindexInfo
+  metadata *common.BlockMetadata
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockIndex {
+  indexItemsMap map[blkstorage.IndexableAttr]bool
+  db *leveldbhelper.DBHandle
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class locPointer {
+  offset int
+  bytesLength int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class fileLocPointer {
+  fileSuffixNum int
+  locPointer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blocksItr {
+  mgr *blockfileMgr
+  maxBlockNumAvailable uint64
+  blockNumToRetrieve uint64
+  stream *blockStream
+  closeMarker bool
+  closeMarkerLock *sync.Mutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class Conf {
+  blockStorageDir string
+  maxBlockfileSize int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class fsBlockStore {
+  id string
+  conf *Conf
+  fileMgr *blockfileMgr
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class FsBlockstoreProvider {
+  conf *Conf
+  indexConfig *blkstorage.IndexConfig
+  leveldbProvider *leveldbhelper.Provider
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\testutil {
+ class BlockGenerator {
+  blockNum uint64
+  previousHash []byte
+  signTxs bool
+  t *testing.T
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class Conf {
+  DBPath string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class DB {
+  conf *Conf
+  db *leveldb.DB
+  dbState dbState
+  mux sync.Mutex
+  readOpts *opt.ReadOptions
+  writeOptsNoSync *opt.WriteOptions
+  writeOptsSync *opt.WriteOptions
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class Provider {
+  db *DB
+  dbHandles map[string]*DBHandle
+  mux sync.Mutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class DBHandle {
+  dbName string
+  db *DB
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class UpdateBatch {
+  KVs map[string][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class Iterator {
+  iterator.Iterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util {
+ class Buffer {
+  buf *proto.Buffer
+  position int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\localmsp {
+ class mspSigner {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\config {
+ class Channel {
+  HashingAlgorithmVal func([]byte)[]byte
+  BlockDataHashingStructureWidthVal uint32
+  OrdererAddressesVal []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\config {
+ class Orderer {
+  ConsensusTypeVal string
+  BatchSizeVal *ab.BatchSize
+  BatchTimeoutVal time.Duration
+  KafkaBrokersVal []string
+  MaxChannelsCountVal uint64
+  OrganizationsVal map[string]config.Org
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\configtx {
+ class Resources {
+  PolicyManagerVal *mockpolicies.Manager
+  ChannelConfigVal config.Channel
+  OrdererConfigVal config.Orderer
+  ApplicationConfigVal config.Application
+  ConsortiumsConfigVal config.Consortiums
+  MSPManagerVal msp.MSPManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\configtx {
+ class Transactional {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\configtx {
+ class Initializer {
+  Resources
+  PolicyProposerVal *PolicyProposer
+  ValueProposerVal *ValueProposer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\configtx {
+ class PolicyProposer {
+  Transactional
+  LastKey string
+  LastPolicy *cb.ConfigPolicy
+  ErrorForProposePolicy error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\configtx {
+ class ValueProposer {
+  Transactional
+  LastKey string
+  LastValue *cb.ConfigValue
+  ErrorForProposeConfig error
+  DeserializeReturn proto.Message
+  DeserializeError error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\configtx {
+ class Manager {
+  Initializer
+  ChainIDVal string
+  SequenceVal uint64
+  ApplyVal error
+  AppliedConfigUpdateEnvelope *cb.ConfigEnvelope
+  ValidateVal error
+  ProposeConfigUpdateError error
+  ProposeConfigUpdateVal *cb.ConfigEnvelope
+  ConfigEnvelopeVal *cb.ConfigEnvelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\crypto {
+ class LocalSigner {
+  Identity []byte
+  Nonce []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\ledger {
+ class MockQueryExecutor {
+  State map[string]map[string][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\msp {
+ class noopmsp {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\msp {
+ class noopidentity {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\msp {
+ class noopsigningidentity {
+  noopidentity
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\peer {
+ class MockResponseSet {
+  DoneFunc func(int,error)
+  ErrorFunc func(int,error)
+  Responses []*MockResponse
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\peer {
+ class MockResponse {
+  RecvMsg *pb.ChaincodeMessage
+  RespMsg interface  { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\peer {
+ class MockCCComm {
+  name string
+  bailOnError bool
+  keepAlive *pb.ChaincodeMessage
+  recvStream chan *pb.ChaincodeMessage
+  sendStream chan *pb.ChaincodeMessage
+  respIndex int
+  respSet *MockResponseSet
+  pong bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\peer {
+ class MockPeerCCSupport {
+  ccStream map[string]*MockCCComm
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\policies {
+ class Policy {
+  Err error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\policies {
+ class Manager {
+  Policy *Policy
+  BasePathVal string
+  PolicyMap map[string]policies.Policy
+  SubManagersMap map[string]*Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\scc {
+ class MocksccProviderFactory {
+  Qe *lm.MockQueryExecutor
+  QErr error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\mocks\\scc {
+ class mocksccProviderImpl {
+  Qe *lm.MockQueryExecutor
+  QErr error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ class implicitMetaPolicy {
+  conf *cb.ImplicitMetaPolicy
+  threshold int
+  subPolicies []Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ class policyConfig {
+  policies map[string]Policy
+  managers map[string]*ManagerImpl
+  imps []*implicitMetaPolicy
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ class ManagerImpl {
+  parent *ManagerImpl
+  basePath string
+  fqPrefix string
+  providers map[int32]Provider
+  config *policyConfig
+  pendingConfig map[interface  { }]*policyConfig
+  pendingLock sync.RWMutex
+  SuppressSanityLogMessages bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck {
+ class Messages {
+  GeneralErrors []string
+  ElementWarnings []*ElementMessage
+  ElementErrors []*ElementMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck {
+ class ElementMessage {
+  Path string
+  Message string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen\\ca {
+ class CA {
+  Name string
+  Signer crypto.Signer
+  SignCert *x509.Certificate
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class HostnameData {
+  Prefix string
+  Index int
+  Domain string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class SpecData {
+  Hostname string
+  Domain string
+  CommonName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class NodeTemplate {
+  Count int
+  Start int
+  Hostname string
+  SANS []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class NodeSpec {
+  Hostname string
+  CommonName string
+  SANS []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class UsersSpec {
+  Count int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class OrgSpec {
+  Name string
+  Domain string
+  CA NodeSpec
+  Template NodeTemplate
+  Specs []NodeSpec
+  Users UsersSpec
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\cryptogen {
+ class Config {
+  OrdererOrgs []OrgSpec
+  PeerOrgs []OrgSpec
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class dynamicFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class dynamicMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class dynamicSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class baseField {
+  msg proto.Message
+  name string
+  fType reflect.Type
+  vType reflect.Type
+  value reflect.Value
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class plainField {
+  baseField
+  populateFrom func(source interface  { },destType reflect.Type)(reflect.Value,error)
+  populateTo func(source reflect.Value)(interface  { },error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class mapField {
+  baseField
+  populateFrom func(key string,value interface  { },destType reflect.Type)(reflect.Value,error)
+  populateTo func(key string,value reflect.Value)(interface  { },error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class sliceField {
+  baseField
+  populateTo func(i int,source reflect.Value)(interface  { },error)
+  populateFrom func(i int,source interface  { },destType reflect.Type)(reflect.Value,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class nestedFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class nestedMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class nestedSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class staticallyOpaqueFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class staticallyOpaqueMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class staticallyOpaqueSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class DynamicMessageWrapper {
+  *ContextlessMsg
+  typeName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class SimpleMsg {
+  PlainField string
+  MapField map[string]string
+  SliceField []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class NestedMsg {
+  PlainNestedField *SimpleMsg
+  MapNestedField map[string]*SimpleMsg
+  SliceNestedField []*SimpleMsg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class StaticallyOpaqueMsg {
+  PlainOpaqueField []byte
+  MapOpaqueField map[string][]byte
+  SliceOpaqueField [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class VariablyOpaqueMsg {
+  OpaqueType string
+  PlainOpaqueField []byte
+  MapOpaqueField map[string][]byte
+  SliceOpaqueField [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class DynamicMsg {
+  DynamicType string
+  PlainDynamicField *ContextlessMsg
+  MapDynamicField map[string]*ContextlessMsg
+  SliceDynamicField []*ContextlessMsg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos {
+ class ContextlessMsg {
+  OpaqueField []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class variablyOpaqueFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class variablyOpaqueMapFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ class variablyOpaqueSliceFieldFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\util {
+ class alg {
+  hashFun func([]byte)string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Org  {
+  Name()string
+  MSPID()string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ApplicationOrg  {
+  AnchorPeers()[]*pb.AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Application  {
+  Organizations()map[string]ApplicationOrg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Channel  {
+  HashingAlgorithm()func(input []byte)[]byte
+  BlockDataHashingStructureWidth()uint32
+  OrdererAddresses()[]string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Consortiums  {
+  Consortiums()map[string]Consortium
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Consortium  {
+  ChannelCreationPolicy()*cb.Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Orderer  {
+  ConsensusType()string
+  BatchSize()*ab.BatchSize
+  BatchTimeout()time.Duration
+  MaxChannelsCount()uint64
+  KafkaBrokers()[]string
+  Organizations()map[string]Org
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ValueProposer  {
+  BeginValueProposals(tx interface  { },groups []string)(ValueDeserializer,[]ValueProposer,error)
+  RollbackProposals(tx interface  { })
+  PreCommit(tx interface  { })error
+  CommitProposals(tx interface  { })
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ChannelValues  {
+  HashingAlgorithm()func(input []byte)[]byte
+  BlockDataHashingStructureWidth()uint32
+  OrdererAddresses()[]string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ValueDeserializer  {
+  Deserialize(key string,value []byte)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Values  {
+  Validate(interface  { },map[string]ValueProposer)error
+  Commit()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Handler  {
+  Allocate()Values
+  NewGroup(name string)(ValueProposer,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Manager  {
+  Apply(configEnv *cb.ConfigEnvelope)error
+  Validate(configEnv *cb.ConfigEnvelope)error
+  ProposeConfigUpdate(configtx *cb.Envelope)(*cb.ConfigEnvelope,error)
+  ChainID()string
+  ConfigEnvelope()*cb.ConfigEnvelope
+  Sequence()uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Resources  {
+  PolicyManager()policies.Manager
+  ChannelConfig()config.Channel
+  OrdererConfig()(config.Orderer,bool)
+  ConsortiumsConfig()(config.Consortiums,bool)
+  ApplicationConfig()(config.Application,bool)
+  MSPManager()msp.MSPManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Transactional  {
+  RollbackProposals(tx interface  { })
+  PreCommit(tx interface  { })error
+  CommitProposals(tx interface  { })
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface PolicyHandler  {
+  BeginConfig(tx interface  { },groups []string)([]PolicyHandler,error)
+  ProposePolicy(tx interface  { },key string,path []string,policy *cb.ConfigPolicy)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Proposer  {
+  ValueProposer()config.ValueProposer
+  PolicyProposer()policies.Proposer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Initializer  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ interface ConfigResult  {
+  JSON()string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ interface Template  {
+  Envelope(chainID string)(*cb.ConfigUpdateEnvelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional {
+ interface Generator  {
+  ChannelTemplate()configtx.Template
+  GenesisBlockForChannel(channelID string)*cb.Block
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\crypto {
+ interface LocalSigner  {
+  NewSignatureHeader()(*cb.SignatureHeader,error)
+  Sign(message []byte)([]byte,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\errors {
+ interface CallStackError  {
+  GetStack()string
+  GetErrorCode()string
+  GetComponentCode()string
+  GetReasonCode()string
+  Message()string
+  GenerateStack(bool)CallStackError
+  WrapError(error)CallStackError
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\genesis {
+ interface Factory  {
+  Block(channelID string)(*cb.Block,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage {
+ interface BlockStoreProvider  {
+  CreateBlockStore(ledgerid string)(BlockStore,error)
+  OpenBlockStore(ledgerid string)(BlockStore,error)
+  Exists(ledgerid string)(bool,error)
+  List()([]string,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage {
+ interface BlockStore  {
+  AddBlock(block *common.Block)error
+  GetBlockchainInfo()(*common.BlockchainInfo,error)
+  RetrieveBlocks(startNum uint64)(ledger.ResultsIterator,error)
+  RetrieveBlockByHash(blockHash []byte)(*common.Block,error)
+  RetrieveBlockByNumber(blockNum uint64)(*common.Block,error)
+  RetrieveTxByID(txID string)(*common.Envelope,error)
+  RetrieveTxByBlockNumTranNum(blockNum uint64,tranNum uint64)(*common.Envelope,error)
+  RetrieveBlockByTxID(txID string)(*common.Block,error)
+  RetrieveTxValidationCodeByTxID(txID string)(peer.TxValidationCode,error)
+  Shutdown()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ interface index  {
+  getLastBlockIndexed()(uint64,error)
+  indexBlock(blockIdxInfo *blockIdxInfo)error
+  getBlockLocByHash(blockHash []byte)(*fileLocPointer,error)
+  getBlockLocByBlockNum(blockNum uint64)(*fileLocPointer,error)
+  getTxLoc(txID string)(*fileLocPointer,error)
+  getTXLocByBlockNumTranNum(blockNum uint64,tranNum uint64)(*fileLocPointer,error)
+  getBlockLocByTxID(txID string)(*fileLocPointer,error)
+  getTxValidationCodeByTxID(txID string)(peer.TxValidationCode,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface Ledger  {
+  GetBlockchainInfo()(*common.BlockchainInfo,error)
+  GetBlockByNumber(blockNumber uint64)(*common.Block,error)
+  GetBlocksIterator(startBlockNumber uint64)(ResultsIterator,error)
+  Close()
+  Commit(block *common.Block)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface ResultsIterator  {
+  Next()(QueryResult,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface QueryResult  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface PrunePolicy  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ interface Policy  {
+  Evaluate(signatureSet []*cb.SignedData)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ interface Manager  {
+  GetPolicy(id string)(Policy,bool)
+  Manager(path []string)(Manager,bool)
+  BasePath()string
+  PolicyNames()[]string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ interface Proposer  {
+  BeginPolicyProposals(tx interface  { },groups []string)([]Proposer,error)
+  ProposePolicy(tx interface  { },name string,policy *cb.ConfigPolicy)(proto.Message,error)
+  RollbackProposals(tx interface  { })
+  CommitProposals(tx interface  { })
+  PreCommit(tx interface  { })error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ interface Provider  {
+  NewPolicy(data []byte)(Policy,proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\policies {
+ interface ChannelPolicyManagerGetter  {
+  Manager(channelID string)(Manager,bool)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface StaticallyOpaqueFieldProto  {
+  StaticallyOpaqueFields()[]string
+  StaticallyOpaqueFieldProto(name string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface StaticallyOpaqueMapFieldProto  {
+  StaticallyOpaqueMapFields()[]string
+  StaticallyOpaqueMapFieldProto(name string,key string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface StaticallyOpaqueSliceFieldProto  {
+  StaticallyOpaqueSliceFields()[]string
+  StaticallyOpaqueSliceFieldProto(name string,index int)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface VariablyOpaqueFieldProto  {
+  VariablyOpaqueFields()[]string
+  VariablyOpaqueFieldProto(name string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface VariablyOpaqueMapFieldProto  {
+  VariablyOpaqueMapFields()[]string
+  VariablyOpaqueMapFieldProto(name string,key string)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface VariablyOpaqueSliceFieldProto  {
+  VariablyOpaqueSliceFields()[]string
+  VariablyOpaqueSliceFieldProto(name string,index int)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DynamicFieldProto  {
+  DynamicFields()[]string
+  DynamicFieldProto(name string,underlying proto.Message)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DynamicMapFieldProto  {
+  DynamicMapFields()[]string
+  DynamicMapFieldProto(name string,key string,underlying proto.Message)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DynamicSliceFieldProto  {
+  DynamicSliceFields()[]string
+  DynamicSliceFieldProto(name string,index int,underlying proto.Message)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface DecoratedProto  {
+  Underlying()proto.Message
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface protoFieldFactory  {
+  Handles(msg proto.Message,fieldName string,fieldType reflect.Type,fieldValue reflect.Value)bool
+  NewProtoField(msg proto.Message,fieldName string,fieldType reflect.Type,fieldValue reflect.Value)(protoField,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\tools\\protolator {
+ interface protoField  {
+  Name()string
+  PopulateFrom(source interface  { })error
+  PopulateTo()(interface  { },error)
+}
+}
+github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup -|> github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup : applicationGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig -|> github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup : applicationOrgGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup -|> github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup -|> github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\config.channelConfigSetter ---> github.com\\hyperledger\\fabric\\common\\config.ChannelConfig : target
+github.com\\hyperledger\\fabric\\common\\config.channelConfigSetter -|> github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelGroup -|> github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ChannelGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfigHandler
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.ChannelProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup : appConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrdererGroup : ordererConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup : consortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup -|> github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig ---> "*" github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup : orgs
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup : consortiumGroup
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup -|> github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup : consortiumsGroup
+github.com\\hyperledger\\fabric\\common\\config\\msp.mspConfigStore ---> "*" github.com\\hyperledger\\fabric\\common\\config\\msp.pendingMSPConfig : idMap
+github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler ---> "*" github.com\\hyperledger\\fabric\\common\\config\\msp.mspConfigStore : pendingConfig
+github.com\\hyperledger\\fabric\\common\\config.OrdererGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.OrdererGroup -|> github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\config.OrdererGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.OrdererConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.OrdererConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrdererProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.OrdererConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrdererGroup : ordererGroup
+github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrganizationProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup : organizationGroup
+github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup -|> github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfigHandler
+github.com\\hyperledger\\fabric\\common\\config.Proposer ---> "*" github.com\\hyperledger\\fabric\\common\\config.config : pending
+github.com\\hyperledger\\fabric\\common\\config.Proposer ---> github.com\\hyperledger\\fabric\\common\\config.config : current
+github.com\\hyperledger\\fabric\\common\\config.Root ---> github.com\\hyperledger\\fabric\\common\\config.ChannelGroup : channel
+github.com\\hyperledger\\fabric\\common\\config.Root ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfigHandler
+github.com\\hyperledger\\fabric\\common\\configtx.configResult ---> "*" github.com\\hyperledger\\fabric\\common\\configtx.configResult : subResults
+github.com\\hyperledger\\fabric\\common\\configtx.resources ---> github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl : policyManager
+github.com\\hyperledger\\fabric\\common\\configtx.resources ---> github.com\\hyperledger\\fabric\\common\\config.Root : configRoot
+github.com\\hyperledger\\fabric\\common\\configtx.resources ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfigHandler
+github.com\\hyperledger\\fabric\\common\\configtx.initializer -|> github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\configtx.initializer ---> github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot : ppr
+github.com\\hyperledger\\fabric\\common\\configtx.configSet ---> "*" github.com\\hyperledger\\fabric\\common\\configtx.comparable : configMap
+github.com\\hyperledger\\fabric\\common\\configtx.configManager ---> github.com\\hyperledger\\fabric\\common\\configtx.configSet : current
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile : Profiles
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application : Application
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer : Orderer
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application : Application
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer : Orderer
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium : Consortiums
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.AnchorPeer : AnchorPeers
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.ApplicationOrganization -|> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.BatchSize : BatchSize
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Kafka : Kafka
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.serializedBlockInfo ---> "*" github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo : txOffsets
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer : loc
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileStream : currentFileStream
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle : db
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.checkpointInfo : cpInfo
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileWriter : currentFileWriter
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer : flp
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo ---> "*" github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo : txOffsets
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle : db
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer -|> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr : mgr
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream : stream
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr : fileMgr
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.IndexConfig : indexConfig
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider : leveldbProvider
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB : db
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider ---> "*" github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle : dbHandles
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB : db
+github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Resources ---> github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager : PolicyManagerVal
+github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer -|> github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Resources
+github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer ---> github.com\\hyperledger\\fabric\\common\\mocks\\configtx.PolicyProposer : PolicyProposerVal
+github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer ---> github.com\\hyperledger\\fabric\\common\\mocks\\configtx.ValueProposer : ValueProposerVal
+github.com\\hyperledger\\fabric\\common\\mocks\\configtx.PolicyProposer -|> github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Transactional
+github.com\\hyperledger\\fabric\\common\\mocks\\configtx.ValueProposer -|> github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Transactional
+github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Manager -|> github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer
+github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopsigningidentity -|> github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopidentity
+github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponseSet ---> "*" github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponse : Responses
+github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockCCComm ---> github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponseSet : respSet
+github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockPeerCCSupport ---> "*" github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockCCComm : ccStream
+github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager ---> github.com\\hyperledger\\fabric\\common\\mocks\\policies.Policy : Policy
+github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager ---> "*" github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager : SubManagersMap
+github.com\\hyperledger\\fabric\\common\\mocks\\scc.MocksccProviderFactory ---> github.com\\hyperledger\\fabric\\common\\mocks\\ledger.MockQueryExecutor : Qe
+github.com\\hyperledger\\fabric\\common\\mocks\\scc.mocksccProviderImpl ---> github.com\\hyperledger\\fabric\\common\\mocks\\ledger.MockQueryExecutor : Qe
+github.com\\hyperledger\\fabric\\common\\policies.policyConfig ---> "*" github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl : managers
+github.com\\hyperledger\\fabric\\common\\policies.policyConfig ---> "*" github.com\\hyperledger\\fabric\\common\\policies.implicitMetaPolicy : imps
+github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl ---> github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl : parent
+github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl ---> github.com\\hyperledger\\fabric\\common\\policies.policyConfig : config
+github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl ---> "*" github.com\\hyperledger\\fabric\\common\\policies.policyConfig : pendingConfig
+github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.Messages ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.ElementMessage : ElementWarnings
+github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.Messages ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.ElementMessage : ElementErrors
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeSpec : CA
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeTemplate : Template
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeSpec : Specs
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec ---> github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.UsersSpec : Users
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.Config ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec : OrdererOrgs
+github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.Config ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec : PeerOrgs
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.plainField -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.mapField -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.sliceField -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMessageWrapper -|> github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg ---> github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg : PlainNestedField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg : MapNestedField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg : SliceNestedField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg ---> github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg : PlainDynamicField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg : MapDynamicField
+github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg ---> "*" github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg : SliceDynamicField
+github.com\\hyperledger\\fabric\\common\\config.Org <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrg <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\config.Application <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\config.Channel <|- github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.Consortiums <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.Consortium <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\config.Orderer <|- github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\config.Orderer <|- github.com\\hyperledger\\fabric\\common\\mocks\\config.Orderer
+github.com\\hyperledger\\fabric\\common\\config.ValueProposer <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\config.ValueProposer <|- github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ValueProposer <|- github.com\\hyperledger\\fabric\\common\\config.Root
+github.com\\hyperledger\\fabric\\common\\config.ChannelValues <|- github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.ValueDeserializer <|- github.com\\hyperledger\\fabric\\common\\config.failDeserializer
+github.com\\hyperledger\\fabric\\common\\config.ValueDeserializer <|- github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ValueDeserializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.ValueProposer
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ChannelGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.OrdererGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Manager <|- github.com\\hyperledger\\fabric\\common\\configtx.configManager
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Manager <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Manager
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Resources <|- github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Resources <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Resources
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\config.Root
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Transactional
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Proposer <|- github.com\\hyperledger\\fabric\\common\\configtx.initializer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Proposer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.provider
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.policy
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.context
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgProtos
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ChannelProtos
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.channelConfigSetter
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ChannelGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumProtos
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config\\msp.pendingMSPConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config\\msp.mspConfigStore
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.OrdererProtos
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.OrdererGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationProtos
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.config
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.Root
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.failDeserializer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.comparable
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.configResult
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.initializer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.configSet
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.configManager
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.simpleTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.compositeTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.modPolicySettingTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.channelCreationTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.AnchorPeer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.ApplicationOrganization
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.BatchSize
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Kafka
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.bootstrapper
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\errors.callError
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\flogging.grpclogger
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\genesis.factory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.IndexConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.serializedBlockInfo
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileStream
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockPlacementInfo
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.checkpointInfo
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileWriter
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileReader
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\testutil.BlockGenerator
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Conf
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.UpdateBatch
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Iterator
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\ledger\\util.Buffer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\localmsp.mspSigner
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\config.Channel
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\config.Orderer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Resources
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Transactional
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.PolicyProposer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.ValueProposer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Manager
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\crypto.LocalSigner
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\ledger.MockQueryExecutor
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopmsp
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopidentity
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopsigningidentity
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponseSet
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponse
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockCCComm
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockPeerCCSupport
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Policy
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\scc.MocksccProviderFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\mocks\\scc.mocksccProviderImpl
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\policies.implicitMetaPolicy
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\policies.policyConfig
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.Messages
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.ElementMessage
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen\\ca.CA
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.HostnameData
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.SpecData
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeSpec
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.UsersSpec
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.Config
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.plainField
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.mapField
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.sliceField
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMessageWrapper
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\util.alg
+github.com\\hyperledger\\fabric\\common\\configtx.ConfigResult <|- github.com\\hyperledger\\fabric\\common\\configtx.configResult
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.simpleTemplate
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.compositeTemplate
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.modPolicySettingTemplate
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.channelCreationTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.Generator <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.bootstrapper
+github.com\\hyperledger\\fabric\\common\\crypto.LocalSigner <|- github.com\\hyperledger\\fabric\\common\\localmsp.mspSigner
+github.com\\hyperledger\\fabric\\common\\crypto.LocalSigner <|- github.com\\hyperledger\\fabric\\common\\mocks\\crypto.LocalSigner
+github.com\\hyperledger\\fabric\\common\\errors.CallStackError <|- github.com\\hyperledger\\fabric\\common\\errors.callError
+github.com\\hyperledger\\fabric\\common\\genesis.Factory <|- github.com\\hyperledger\\fabric\\common\\genesis.factory
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.BlockStoreProvider <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.BlockStore <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.index <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex
+github.com\\hyperledger\\fabric\\common\\ledger.ResultsIterator <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.provider
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.policy
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.context
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgProtos
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ChannelProtos
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.channelConfigSetter
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ChannelGroup
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumProtos
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config\\msp.pendingMSPConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config\\msp.mspConfigStore
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.OrdererProtos
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.OrdererGroup
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationProtos
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.config
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.Root
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.failDeserializer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.comparable
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.configResult
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.initializer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.configSet
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.configManager
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.simpleTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.compositeTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.modPolicySettingTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx.channelCreationTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.AnchorPeer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.ApplicationOrganization
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.BatchSize
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Kafka
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.bootstrapper
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\errors.callError
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\flogging.grpclogger
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\genesis.factory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.IndexConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.serializedBlockInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileStream
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockPlacementInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.checkpointInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileWriter
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileReader
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\testutil.BlockGenerator
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.UpdateBatch
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Iterator
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util.Buffer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\localmsp.mspSigner
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\config.Channel
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\config.Orderer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Resources
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Transactional
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.PolicyProposer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.ValueProposer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Manager
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\crypto.LocalSigner
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\ledger.MockQueryExecutor
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopmsp
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopidentity
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopsigningidentity
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponseSet
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponse
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockCCComm
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockPeerCCSupport
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Policy
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\scc.MocksccProviderFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\mocks\\scc.mocksccProviderImpl
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\policies.implicitMetaPolicy
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\policies.policyConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.Messages
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.ElementMessage
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen\\ca.CA
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.HostnameData
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.SpecData
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeSpec
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.UsersSpec
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.Config
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.plainField
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.mapField
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.sliceField
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMessageWrapper
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\util.alg
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.provider
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.policy
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.context
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgProtos
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ChannelProtos
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.channelConfigSetter
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ChannelGroup
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumProtos
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config\\msp.pendingMSPConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config\\msp.mspConfigStore
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.OrdererProtos
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.OrdererGroup
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationProtos
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.config
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.Root
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.failDeserializer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.comparable
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.configResult
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.initializer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.configSet
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.configManager
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.simpleTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.compositeTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.modPolicySettingTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx.channelCreationTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.AnchorPeer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.ApplicationOrganization
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.BatchSize
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Kafka
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.bootstrapper
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\errors.callError
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\flogging.grpclogger
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\genesis.factory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.IndexConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.serializedBlockInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileStream
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockPlacementInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.checkpointInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileWriter
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileReader
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\testutil.BlockGenerator
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.UpdateBatch
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Iterator
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util.Buffer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\localmsp.mspSigner
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\config.Channel
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\config.Orderer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Resources
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Transactional
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Initializer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.PolicyProposer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.ValueProposer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\configtx.Manager
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\crypto.LocalSigner
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\ledger.MockQueryExecutor
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopmsp
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopidentity
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\msp.noopsigningidentity
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponseSet
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockResponse
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockCCComm
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\peer.MockPeerCCSupport
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Policy
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\scc.MocksccProviderFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\mocks\\scc.mocksccProviderImpl
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\policies.implicitMetaPolicy
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\policies.policyConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.Messages
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\configtxlator\\sanitycheck.ElementMessage
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen\\ca.CA
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.HostnameData
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.SpecData
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeTemplate
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.NodeSpec
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.UsersSpec
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.OrgSpec
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\cryptogen.Config
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.baseField
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.plainField
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.mapField
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.sliceField
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMessageWrapper
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.SimpleMsg
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.NestedMsg
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.ContextlessMsg
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\util.alg
+github.com\\hyperledger\\fabric\\common\\policies.Policy <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.policy
+github.com\\hyperledger\\fabric\\common\\policies.Policy <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Policy
+github.com\\hyperledger\\fabric\\common\\policies.Policy <|- github.com\\hyperledger\\fabric\\common\\policies.implicitMetaPolicy
+github.com\\hyperledger\\fabric\\common\\policies.Manager <|- github.com\\hyperledger\\fabric\\common\\mocks\\policies.Manager
+github.com\\hyperledger\\fabric\\common\\policies.Manager <|- github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl
+github.com\\hyperledger\\fabric\\common\\policies.Proposer <|- github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot
+github.com\\hyperledger\\fabric\\common\\policies.Proposer <|- github.com\\hyperledger\\fabric\\common\\policies.ManagerImpl
+github.com\\hyperledger\\fabric\\common\\policies.Provider <|- github.com\\hyperledger\\fabric\\common\\cauthdsl.provider
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.StaticallyOpaqueFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.StaticallyOpaqueMapFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.StaticallyOpaqueSliceFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.StaticallyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.VariablyOpaqueFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.VariablyOpaqueMapFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.VariablyOpaqueSliceFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.VariablyOpaqueMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DynamicFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DynamicMapFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DynamicSliceFieldProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMsg
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.DecoratedProto <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator\\testprotos.DynamicMessageWrapper
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.dynamicSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.nestedSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.staticallyOpaqueSliceFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueMapFieldFactory
+github.com\\hyperledger\\fabric\\common\\tools\\protolator.protoFieldFactory <|- github.com\\hyperledger\\fabric\\common\\tools\\protolator.variablyOpaqueSliceFieldFactory
+@enduml

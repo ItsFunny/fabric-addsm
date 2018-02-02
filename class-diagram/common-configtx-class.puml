@@ -1,0 +1,267 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class comparable {
+  *cb.ConfigGroup
+  *cb.ConfigValue
+  *cb.ConfigPolicy
+  key string
+  path []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class configResult {
+  tx interface  { }
+  groupName string
+  groupKey string
+  group *cb.ConfigGroup
+  valueHandler config.ValueProposer
+  policyHandler policies.Proposer
+  subResults []*configResult
+  deserializedValues map[string]proto.Message
+  deserializedPolicies map[string]proto.Message
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class resources {
+  policyManager *policies.ManagerImpl
+  configRoot *config.Root
+  mspConfigHandler *configtxmsp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class policyProposerRoot {
+  policyManager policies.Proposer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class initializer {
+  *resources
+  ppr *policyProposerRoot
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class configSet {
+  channelID string
+  sequence uint64
+  configMap map[string]comparable
+  configEnv *cb.ConfigEnvelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class configManager {
+  api.Resources
+  callOnUpdate []func(api.Manager)
+  initializer api.Initializer
+  current *configSet
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class simpleTemplate {
+  configGroup *cb.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class compositeTemplate {
+  templates []Template
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class modPolicySettingTemplate {
+  modPolicy string
+  template Template
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ class channelCreationTemplate {
+  consortiumName string
+  orgs []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class TopLevel {
+  Profiles map[string]*Profile
+  Organizations []*Organization
+  Application *Application
+  Orderer *Orderer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Profile {
+  Consortium string
+  Application *Application
+  Orderer *Orderer
+  Consortiums map[string]*Consortium
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Consortium {
+  Organizations []*Organization
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Application {
+  Organizations []*Organization
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Organization {
+  Name string
+  ID string
+  MSPDir string
+  AdminPrincipal string
+  AnchorPeers []*AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class AnchorPeer {
+  Host string
+  Port int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class ApplicationOrganization {
+  Organization
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Orderer {
+  OrdererType string
+  Addresses []string
+  BatchTimeout time.Duration
+  BatchSize BatchSize
+  Kafka Kafka
+  Organizations []*Organization
+  MaxChannels uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class BatchSize {
+  MaxMessageCount uint32
+  AbsoluteMaxBytes uint32
+  PreferredMaxBytes uint32
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig {
+ class Kafka {
+  Brokers []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional {
+ class bootstrapper {
+  channelGroups []*cb.ConfigGroup
+  ordererGroups []*cb.ConfigGroup
+  applicationGroups []*cb.ConfigGroup
+  consortiumsGroups []*cb.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Manager  {
+  Apply(configEnv *cb.ConfigEnvelope)error
+  Validate(configEnv *cb.ConfigEnvelope)error
+  ProposeConfigUpdate(configtx *cb.Envelope)(*cb.ConfigEnvelope,error)
+  ChainID()string
+  ConfigEnvelope()*cb.ConfigEnvelope
+  Sequence()uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Resources  {
+  PolicyManager()policies.Manager
+  ChannelConfig()config.Channel
+  OrdererConfig()(config.Orderer,bool)
+  ConsortiumsConfig()(config.Consortiums,bool)
+  ApplicationConfig()(config.Application,bool)
+  MSPManager()msp.MSPManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Transactional  {
+  RollbackProposals(tx interface  { })
+  PreCommit(tx interface  { })error
+  CommitProposals(tx interface  { })
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface PolicyHandler  {
+  BeginConfig(tx interface  { },groups []string)([]PolicyHandler,error)
+  ProposePolicy(tx interface  { },key string,path []string,policy *cb.ConfigPolicy)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Proposer  {
+  ValueProposer()config.ValueProposer
+  PolicyProposer()policies.Proposer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\api {
+ interface Initializer  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ interface ConfigResult  {
+  JSON()string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx {
+ interface Template  {
+  Envelope(chainID string)(*cb.ConfigUpdateEnvelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional {
+ interface Generator  {
+  ChannelTemplate()configtx.Template
+  GenesisBlockForChannel(channelID string)*cb.Block
+}
+}
+github.com\\hyperledger\\fabric\\common\\configtx.configResult ---> "*" github.com\\hyperledger\\fabric\\common\\configtx.configResult : subResults
+github.com\\hyperledger\\fabric\\common\\configtx.initializer -|> github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\configtx.initializer ---> github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot : ppr
+github.com\\hyperledger\\fabric\\common\\configtx.configSet ---> "*" github.com\\hyperledger\\fabric\\common\\configtx.comparable : configMap
+github.com\\hyperledger\\fabric\\common\\configtx.configManager ---> github.com\\hyperledger\\fabric\\common\\configtx.configSet : current
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile : Profiles
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application : Application
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer : Orderer
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application : Application
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer : Orderer
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium : Consortiums
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.AnchorPeer : AnchorPeers
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.ApplicationOrganization -|> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.BatchSize : BatchSize
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer ---> github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Kafka : Kafka
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer ---> "*" github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization : Organizations
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Manager <|- github.com\\hyperledger\\fabric\\common\\configtx.configManager
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Resources <|- github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Transactional <|- github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Proposer <|- github.com\\hyperledger\\fabric\\common\\configtx.initializer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.comparable
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.configResult
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.resources
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.policyProposerRoot
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.initializer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.configSet
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.configManager
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.simpleTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.compositeTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.modPolicySettingTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx.channelCreationTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.TopLevel
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Profile
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Consortium
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Application
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Organization
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.AnchorPeer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.ApplicationOrganization
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Orderer
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.BatchSize
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\localconfig.Kafka
+github.com\\hyperledger\\fabric\\common\\configtx\\api.Initializer <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.bootstrapper
+github.com\\hyperledger\\fabric\\common\\configtx.ConfigResult <|- github.com\\hyperledger\\fabric\\common\\configtx.configResult
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.simpleTemplate
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.compositeTemplate
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.modPolicySettingTemplate
+github.com\\hyperledger\\fabric\\common\\configtx.Template <|- github.com\\hyperledger\\fabric\\common\\configtx.channelCreationTemplate
+github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.Generator <|- github.com\\hyperledger\\fabric\\common\\configtx\\tool\\provisional.bootstrapper
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\bccsp\\factory {
+ class FactoryOpts {
+  ProviderName string
+  SwOpts *SwOpts
+  Pkcs11Opts *pkcs11.PKCS11Opts
+}
+}
+
+namespace github.com\\hyperledger\\fabric\\bccsp\\factory {
+ class PKCS11Factory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\bccsp\\factory {
+ class SWFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\bccsp\\factory {
+ class SwOpts {
+  SecLevel int
+  HashFamily string
+  Ephemeral bool
+  FileKeystore *FileKeystoreOpts
+  DummyKeystore *DummyKeystoreOpts
+}
+}
+namespace github.com\\hyperledger\\fabric\\bccsp\\factory {
+ class FileKeystoreOpts {
+  KeyStorePath string
+}
+}
+namespace github.com\\hyperledger\\fabric\\bccsp\\factory {
+ class DummyKeystoreOpts {
+}
+}
+namespace github.com\\hyperledger\\fabric\\bccsp\\factory {
+ interface BCCSPFactory  {
+  Name()string
+  Get(opts *FactoryOpts)(bccsp.BCCSP,error)
+}
+}
+github.com\\hyperledger\\fabric\\bccsp\\factory.FactoryOpts ---> github.com\\hyperledger\\fabric\\bccsp\\factory.SwOpts : SwOpts
+github.com\\hyperledger\\fabric\\bccsp\\factory.FactoryOpts ---> github.com\\hyperledger\\fabric\\bccsp\\factory.SwOpts : SwOpts
+github.com\\hyperledger\\fabric\\bccsp\\factory.SwOpts ---> github.com\\hyperledger\\fabric\\bccsp\\factory.FileKeystoreOpts : FileKeystore
+github.com\\hyperledger\\fabric\\bccsp\\factory.SwOpts ---> github.com\\hyperledger\\fabric\\bccsp\\factory.DummyKeystoreOpts : DummyKeystore
+github.com\\hyperledger\\fabric\\bccsp\\factory.BCCSPFactory <|- github.com\\hyperledger\\fabric\\bccsp\\factory.PKCS11Factory
+github.com\\hyperledger\\fabric\\bccsp\\factory.BCCSPFactory <|- github.com\\hyperledger\\fabric\\bccsp\\factory.SWFactory
+@enduml

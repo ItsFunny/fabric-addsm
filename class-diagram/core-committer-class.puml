@@ -1,0 +1,51 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core\\committer {
+ class LedgerCommitter {
+  ledger ledger.PeerLedger
+  validator txvalidator.Validator
+  eventer ConfigBlockEventer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ class vsccValidatorImpl {
+  support Support
+  ccprovider ccprovider.ChaincodeProvider
+  sccprovider sysccprovider.SystemChaincodeProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ class txValidator {
+  support Support
+  vscc vsccValidator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer {
+ interface Committer  {
+  Commit(block *common.Block)error
+  LedgerHeight()(uint64,error)
+  GetBlocks(blockSeqs []uint64)[]*common.Block
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ interface Support  {
+  Ledger()ledger.PeerLedger
+  MSPManager()msp.MSPManager
+  Apply(configtx *common.ConfigEnvelope)error
+  GetMSPIDs(cid string)[]string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ interface Validator  {
+  Validate(block *common.Block)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\committer\\txvalidator {
+ interface vsccValidator  {
+  VSCCValidateTx(payload *common.Payload,envBytes []byte,env *common.Envelope)(error,peer.TxValidationCode)
+}
+}
+github.com\\hyperledger\\fabric\\core\\committer.Committer <|- github.com\\hyperledger\\fabric\\core\\committer.LedgerCommitter
+github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.Validator <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.txValidator
+github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidator <|- github.com\\hyperledger\\fabric\\core\\committer\\txvalidator.vsccValidatorImpl
+@enduml

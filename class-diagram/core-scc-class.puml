@@ -1,0 +1,50 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core\\scc\\cscc {
+ class PeerConfiger {
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\escc {
+ class EndorserOneValidSignature {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\lscc {
+ class LifeCycleSysCC {
+  sccprovider sysccprovider.SystemChaincodeProvider
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\qscc {
+ class LedgerQuerier {
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\samplesyscc {
+ class SampleSysCC {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc {
+ class sccProviderFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc {
+ class sccProviderImpl {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc {
+ class SystemChaincode {
+  Name string
+  Path string
+  InitArgs [][]byte
+  Chaincode shim.Chaincode
+  InvokableExternal bool
+  InvokableCC2CC bool
+  Enabled bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\scc\\vscc {
+ class ValidatorOneValidSignature {
+  sccprovider sysccprovider.SystemChaincodeProvider
+}
+}
+@enduml

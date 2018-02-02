@@ -1,0 +1,57 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\events\\consumer {
+ class EventsClient {
+  sync.RWMutex
+  peerAddress string
+  regTimeout time.Duration
+  stream ehpb.Events_ChatClient
+  adapter EventAdapter
+}
+}
+namespace github.com\\hyperledger\\fabric\\events\\producer {
+ class genericHandlerList {
+  sync.RWMutex
+  handlers map[*handler]bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\events\\producer {
+ class chaincodeHandlerList {
+  sync.RWMutex
+  handlers map[string]map[string]map[*handler]bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\events\\producer {
+ class eventProcessor {
+  sync.RWMutex
+  eventConsumers map[pb.EventType]handlerList
+  eventChannel chan *pb.Event
+  timeout time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\events\\producer {
+ class handler {
+  ChatStream pb.Events_ChatServer
+  interestedEvents map[string]*pb.Interest
+}
+}
+namespace github.com\\hyperledger\\fabric\\events\\producer {
+ class EventsServer {
+}
+}
+namespace github.com\\hyperledger\\fabric\\events\\consumer {
+ interface EventAdapter  {
+  GetInterestedEvents()([]*peer.Interest,error)
+  Recv(msg *peer.Event)(bool,error)
+  Disconnected(err error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\events\\producer {
+ interface handlerList  {
+  add(ie *pb.Interest,h *handler)(bool,error)
+  del(ie *pb.Interest,h *handler)(bool,error)
+  foreach(ie *pb.Event,action func(h *handler))
+}
+}
+github.com\\hyperledger\\fabric\\events\\producer.handlerList <|- github.com\\hyperledger\\fabric\\events\\producer.genericHandlerList
+github.com\\hyperledger\\fabric\\events\\producer.handlerList <|- github.com\\hyperledger\\fabric\\events\\producer.chaincodeHandlerList
+@enduml

@@ -1,0 +1,346 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationGroup {
+  *Proposer
+  *ApplicationConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationConfig {
+  *standardValues
+  applicationGroup *ApplicationGroup
+  applicationOrgs map[string]ApplicationOrg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationOrgProtos {
+  AnchorPeers *pb.AnchorPeers
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationOrgConfig {
+  *OrganizationConfig
+  protos *ApplicationOrgProtos
+  applicationOrgGroup *ApplicationOrgGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ApplicationOrgGroup {
+  *Proposer
+  *OrganizationGroup
+  *ApplicationOrgConfig
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ChannelProtos {
+  HashingAlgorithm *cb.HashingAlgorithm
+  BlockDataHashingStructure *cb.BlockDataHashingStructure
+  OrdererAddresses *cb.OrdererAddresses
+  Consortium *cb.Consortium
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class channelConfigSetter {
+  target **ChannelConfig
+  *ChannelConfig
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ChannelGroup {
+  *ChannelConfig
+  *Proposer
+  mspConfigHandler *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ChannelConfig {
+  *standardValues
+  protos *ChannelProtos
+  hashingAlgorithm func(input []byte)[]byte
+  appConfig *ApplicationGroup
+  ordererConfig *OrdererGroup
+  consortiumsConfig *ConsortiumsGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumProtos {
+  ChannelCreationPolicy *cb.Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumGroup {
+  *Proposer
+  *ConsortiumConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumConfig {
+  *standardValues
+  protos *ConsortiumProtos
+  orgs map[string]*OrganizationGroup
+  consortiumGroup *ConsortiumGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumsGroup {
+  *Proposer
+  *ConsortiumsConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class ConsortiumsConfig {
+  *standardValues
+  consortiums map[string]Consortium
+  consortiumsGroup *ConsortiumsGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config\\msp {
+ class pendingMSPConfig {
+  mspConfig *mspprotos.MSPConfig
+  msp msp.MSP
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config\\msp {
+ class mspConfigStore {
+  idMap map[string]*pendingMSPConfig
+  proposedMgr msp.MSPManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config\\msp {
+ class MSPConfigHandler {
+  pendingConfig map[interface  { }]*mspConfigStore
+  pendingLock sync.RWMutex
+  msp.MSPManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrdererProtos {
+  ConsensusType *ab.ConsensusType
+  BatchSize *ab.BatchSize
+  BatchTimeout *ab.BatchTimeout
+  KafkaBrokers *ab.KafkaBrokers
+  ChannelRestrictions *ab.ChannelRestrictions
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrdererGroup {
+  *Proposer
+  *OrdererConfig
+  mspConfig *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrdererConfig {
+  *standardValues
+  protos *OrdererProtos
+  ordererGroup *OrdererGroup
+  orgs map[string]Org
+  batchTimeout time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrganizationProtos {
+  MSP *mspprotos.MSPConfig
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrganizationConfig {
+  *standardValues
+  protos *OrganizationProtos
+  organizationGroup *OrganizationGroup
+  msp msp.MSP
+  mspID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class OrganizationGroup {
+  *Proposer
+  *OrganizationConfig
+  name string
+  mspConfigHandler *mspconfig.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class config {
+  allocated Values
+  groups map[string]ValueProposer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class Proposer {
+  vh Handler
+  pending map[interface  { }]*config
+  current *config
+  pendingLock sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class Root {
+  channel *ChannelGroup
+  mspConfigHandler *msp.MSPConfigHandler
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class failDeserializer {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ class standardValues {
+  lookup map[string]proto.Message
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Org  {
+  Name()string
+  MSPID()string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ApplicationOrg  {
+  AnchorPeers()[]*pb.AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Application  {
+  Organizations()map[string]ApplicationOrg
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Channel  {
+  HashingAlgorithm()func(input []byte)[]byte
+  BlockDataHashingStructureWidth()uint32
+  OrdererAddresses()[]string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Consortiums  {
+  Consortiums()map[string]Consortium
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Consortium  {
+  ChannelCreationPolicy()*cb.Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Orderer  {
+  ConsensusType()string
+  BatchSize()*ab.BatchSize
+  BatchTimeout()time.Duration
+  MaxChannelsCount()uint64
+  KafkaBrokers()[]string
+  Organizations()map[string]Org
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ValueProposer  {
+  BeginValueProposals(tx interface  { },groups []string)(ValueDeserializer,[]ValueProposer,error)
+  RollbackProposals(tx interface  { })
+  PreCommit(tx interface  { })error
+  CommitProposals(tx interface  { })
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ChannelValues  {
+  HashingAlgorithm()func(input []byte)[]byte
+  BlockDataHashingStructureWidth()uint32
+  OrdererAddresses()[]string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface ValueDeserializer  {
+  Deserialize(key string,value []byte)(proto.Message,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Values  {
+  Validate(interface  { },map[string]ValueProposer)error
+  Commit()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\config {
+ interface Handler  {
+  Allocate()Values
+  NewGroup(name string)(ValueProposer,error)
+}
+}
+github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup -|> github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup : applicationGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig -|> github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup : applicationOrgGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup -|> github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgGroup -|> github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\config.channelConfigSetter ---> github.com\\hyperledger\\fabric\\common\\config.ChannelConfig : target
+github.com\\hyperledger\\fabric\\common\\config.channelConfigSetter -|> github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelGroup -|> github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ChannelGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfigHandler
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.ChannelProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup : appConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrdererGroup : ordererConfig
+github.com\\hyperledger\\fabric\\common\\config.ChannelConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup : consortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup -|> github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig ---> "*" github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup : orgs
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup : consortiumGroup
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup -|> github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig ---> github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup : consortiumsGroup
+github.com\\hyperledger\\fabric\\common\\config\\msp.mspConfigStore ---> "*" github.com\\hyperledger\\fabric\\common\\config\\msp.pendingMSPConfig : idMap
+github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler ---> "*" github.com\\hyperledger\\fabric\\common\\config\\msp.mspConfigStore : pendingConfig
+github.com\\hyperledger\\fabric\\common\\config.OrdererGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.OrdererGroup -|> github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\config.OrdererGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfig
+github.com\\hyperledger\\fabric\\common\\config.OrdererConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.OrdererConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrdererProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.OrdererConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrdererGroup : ordererGroup
+github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig -|> github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrganizationProtos : protos
+github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig ---> github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup : organizationGroup
+github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup -|> github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup -|> github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfigHandler
+github.com\\hyperledger\\fabric\\common\\config.Proposer ---> "*" github.com\\hyperledger\\fabric\\common\\config.config : pending
+github.com\\hyperledger\\fabric\\common\\config.Proposer ---> github.com\\hyperledger\\fabric\\common\\config.config : current
+github.com\\hyperledger\\fabric\\common\\config.Root ---> github.com\\hyperledger\\fabric\\common\\config.ChannelGroup : channel
+github.com\\hyperledger\\fabric\\common\\config.Root ---> github.com\\hyperledger\\fabric\\common\\config\\msp.MSPConfigHandler : mspConfigHandler
+github.com\\hyperledger\\fabric\\common\\config.Org <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+github.com\\hyperledger\\fabric\\common\\config.ApplicationOrg <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\config.Application <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\config.Channel <|- github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.Consortiums <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.Consortium <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\config.Orderer <|- github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\config.ValueProposer <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\config.ValueProposer <|- github.com\\hyperledger\\fabric\\common\\config.Proposer
+github.com\\hyperledger\\fabric\\common\\config.ValueProposer <|- github.com\\hyperledger\\fabric\\common\\config.Root
+github.com\\hyperledger\\fabric\\common\\config.ChannelValues <|- github.com\\hyperledger\\fabric\\common\\config.ChannelConfig
+github.com\\hyperledger\\fabric\\common\\config.ValueDeserializer <|- github.com\\hyperledger\\fabric\\common\\config.failDeserializer
+github.com\\hyperledger\\fabric\\common\\config.ValueDeserializer <|- github.com\\hyperledger\\fabric\\common\\config.standardValues
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationOrgConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.OrdererConfig
+github.com\\hyperledger\\fabric\\common\\config.Values <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationConfig
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ApplicationGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ChannelGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.ConsortiumsGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.OrdererGroup
+github.com\\hyperledger\\fabric\\common\\config.Handler <|- github.com\\hyperledger\\fabric\\common\\config.OrganizationGroup
+@enduml

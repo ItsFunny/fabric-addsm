@@ -1,0 +1,320 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage {
+ class IndexConfig {
+  AttrsToIndex []IndexableAttr
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class serializedBlockInfo {
+  blockHeader *common.BlockHeader
+  txOffsets []*txindexInfo
+  metadata *common.BlockMetadata
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class txindexInfo {
+  txID string
+  loc *locPointer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileStream {
+  fileNum int
+  file *os.File
+  reader *bufio.Reader
+  currentOffset int64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockStream {
+  rootDir string
+  currentFileNum int
+  endFileNum int
+  currentFileStream *blockfileStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockPlacementInfo {
+  fileNum int
+  blockStartOffset int64
+  blockBytesOffset int64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileMgr {
+  rootDir string
+  conf *Conf
+  db *leveldbhelper.DBHandle
+  index index
+  cpInfo *checkpointInfo
+  cpInfoCond *sync.Cond
+  currentFileWriter *blockfileWriter
+  bcInfo atomic.Value
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class checkpointInfo {
+  latestFileChunkSuffixNum int
+  latestFileChunksize int
+  isChainEmpty bool
+  lastBlockNumber uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileWriter {
+  filePath string
+  file *os.File
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockfileReader {
+  file *os.File
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockIdxInfo {
+  blockNum uint64
+  blockHash []byte
+  flp *fileLocPointer
+  txOffsets []*txindexInfo
+  metadata *common.BlockMetadata
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blockIndex {
+  indexItemsMap map[blkstorage.IndexableAttr]bool
+  db *leveldbhelper.DBHandle
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class locPointer {
+  offset int
+  bytesLength int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class fileLocPointer {
+  fileSuffixNum int
+  locPointer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class blocksItr {
+  mgr *blockfileMgr
+  maxBlockNumAvailable uint64
+  blockNumToRetrieve uint64
+  stream *blockStream
+  closeMarker bool
+  closeMarkerLock *sync.Mutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class Conf {
+  blockStorageDir string
+  maxBlockfileSize int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class fsBlockStore {
+  id string
+  conf *Conf
+  fileMgr *blockfileMgr
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ class FsBlockstoreProvider {
+  conf *Conf
+  indexConfig *blkstorage.IndexConfig
+  leveldbProvider *leveldbhelper.Provider
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\testutil {
+ class BlockGenerator {
+  blockNum uint64
+  previousHash []byte
+  signTxs bool
+  t *testing.T
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class Conf {
+  DBPath string
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class DB {
+  conf *Conf
+  db *leveldb.DB
+  dbState dbState
+  mux sync.Mutex
+  readOpts *opt.ReadOptions
+  writeOptsNoSync *opt.WriteOptions
+  writeOptsSync *opt.WriteOptions
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class Provider {
+  db *DB
+  dbHandles map[string]*DBHandle
+  mux sync.Mutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class DBHandle {
+  dbName string
+  db *DB
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class UpdateBatch {
+  KVs map[string][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper {
+ class Iterator {
+  iterator.Iterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\util {
+ class Buffer {
+  buf *proto.Buffer
+  position int
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage {
+ interface BlockStoreProvider  {
+  CreateBlockStore(ledgerid string)(BlockStore,error)
+  OpenBlockStore(ledgerid string)(BlockStore,error)
+  Exists(ledgerid string)(bool,error)
+  List()([]string,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage {
+ interface BlockStore  {
+  AddBlock(block *common.Block)error
+  GetBlockchainInfo()(*common.BlockchainInfo,error)
+  RetrieveBlocks(startNum uint64)(ledger.ResultsIterator,error)
+  RetrieveBlockByHash(blockHash []byte)(*common.Block,error)
+  RetrieveBlockByNumber(blockNum uint64)(*common.Block,error)
+  RetrieveTxByID(txID string)(*common.Envelope,error)
+  RetrieveTxByBlockNumTranNum(blockNum uint64,tranNum uint64)(*common.Envelope,error)
+  RetrieveBlockByTxID(txID string)(*common.Block,error)
+  RetrieveTxValidationCodeByTxID(txID string)(peer.TxValidationCode,error)
+  Shutdown()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage {
+ interface index  {
+  getLastBlockIndexed()(uint64,error)
+  indexBlock(blockIdxInfo *blockIdxInfo)error
+  getBlockLocByHash(blockHash []byte)(*fileLocPointer,error)
+  getBlockLocByBlockNum(blockNum uint64)(*fileLocPointer,error)
+  getTxLoc(txID string)(*fileLocPointer,error)
+  getTXLocByBlockNumTranNum(blockNum uint64,tranNum uint64)(*fileLocPointer,error)
+  getBlockLocByTxID(txID string)(*fileLocPointer,error)
+  getTxValidationCodeByTxID(txID string)(peer.TxValidationCode,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface Ledger  {
+  GetBlockchainInfo()(*common.BlockchainInfo,error)
+  GetBlockByNumber(blockNumber uint64)(*common.Block,error)
+  GetBlocksIterator(startBlockNumber uint64)(ResultsIterator,error)
+  Close()
+  Commit(block *common.Block)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface ResultsIterator  {
+  Next()(QueryResult,error)
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface QueryResult  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\ledger {
+ interface PrunePolicy  {
+}
+}
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.serializedBlockInfo ---> "*" github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo : txOffsets
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer : loc
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileStream : currentFileStream
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle : db
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.checkpointInfo : cpInfo
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileWriter : currentFileWriter
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer : flp
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo ---> "*" github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo : txOffsets
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle : db
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer -|> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr : mgr
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream : stream
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr : fileMgr
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider ---> github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.IndexConfig : indexConfig
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider : leveldbProvider
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Conf : conf
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB : db
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider ---> "*" github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle : dbHandles
+github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle ---> github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB : db
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.BlockStoreProvider <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.BlockStore <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore
+github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.index <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex
+github.com\\hyperledger\\fabric\\common\\ledger.ResultsIterator <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.IndexConfig
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.serializedBlockInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileStream
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockPlacementInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.checkpointInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileWriter
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileReader
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\testutil.BlockGenerator
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.UpdateBatch
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Iterator
+github.com\\hyperledger\\fabric\\common\\ledger.QueryResult <|- github.com\\hyperledger\\fabric\\common\\ledger\\util.Buffer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage.IndexConfig
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.serializedBlockInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.txindexInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileStream
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockStream
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockPlacementInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileMgr
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.checkpointInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileWriter
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockfileReader
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIdxInfo
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blockIndex
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.locPointer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fileLocPointer
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.blocksItr
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.fsBlockStore
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\blkstorage\\fsblkstorage.FsBlockstoreProvider
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\testutil.BlockGenerator
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Conf
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DB
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Provider
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.DBHandle
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.UpdateBatch
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util\\leveldbhelper.Iterator
+github.com\\hyperledger\\fabric\\common\\ledger.PrunePolicy <|- github.com\\hyperledger\\fabric\\common\\ledger\\util.Buffer
+@enduml

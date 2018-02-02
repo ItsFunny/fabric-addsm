@@ -1,0 +1,706 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\blockcutter {
+ class receiver {
+  sharedConfigManager config.Orderer
+  filters *filter.RuleSet
+  pendingBatch []*cb.Envelope
+  pendingBatchSizeBytes uint32
+  pendingCommitters []filter.Committer
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\bootstrap\\file {
+ class fileBootstrapper {
+  GenesisBlockFile string
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\broadcast {
+ class handlerImpl {
+  sm SupportManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\configtxfilter {
+ class configFilter {
+  configManager api.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\configtxfilter {
+ class configCommitter {
+  manager api.Manager
+  configEnvelope *cb.ConfigEnvelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\deliver {
+ class deliverServer {
+  sm SupportManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\filter {
+ class noopCommitter {
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\filter {
+ class emptyRejectRule {
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\filter {
+ class acceptRule {
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\filter {
+ class RuleSet {
+  rules []Rule
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\sigfilter {
+ class sigFilter {
+  policySource string
+  policyManager policies.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\sizefilter {
+ class maxBytesRule {
+  maxBytes uint32
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\configupdate {
+ class Processor {
+  signer crypto.LocalSigner
+  manager SupportManager
+  systemChannelID string
+  systemChannelSupport Support
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ class chainImpl {
+  consenter commonConsenter
+  support multichain.ConsenterSupport
+  channel channel
+  lastOffsetPersisted int64
+  lastCutBlockNumber uint64
+  producer sarama.SyncProducer
+  parentConsumer sarama.Consumer
+  channelConsumer sarama.PartitionConsumer
+  errorChan chan struct { }
+  haltChan chan struct { }
+  startChan chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ class channelImpl {
+  tpc string
+  prt int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ class consenterImpl {
+  brokerConfigVal *sarama.Config
+  tlsConfigVal localconfig.TLS
+  retryOptionsVal localconfig.Retry
+  kafkaVersionVal sarama.KafkaVersion
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ class staticPartitioner {
+  partitionID int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ class retryProcess {
+  shortPollingInterval,shortTimeout time.Duration
+  longPollingInterval,longTimeout time.Duration
+  exit chan struct { }
+  channel channel
+  msg string
+  fn func()error
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\file {
+ class fileLedgerFactory {
+  blkstorageProvider blkstorage.BlockStoreProvider
+  ledgers map[string]ledger.ReadWriter
+  mutex sync.Mutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\file {
+ class fileLedger {
+  blockStore blkstorage.BlockStore
+  signal chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\file {
+ class fileLedgerIterator {
+  ledger *fileLedger
+  blockNumber uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\json {
+ class jsonLedgerFactory {
+  directory string
+  ledgers map[string]ledger.ReadWriter
+  mutex sync.Mutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\json {
+ class cursor {
+  jl *jsonLedger
+  blockNumber uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\json {
+ class jsonLedger {
+  directory string
+  height uint64
+  signal chan struct { }
+  lastHash []byte
+  marshaler *jsonpb.Marshaler
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\ram {
+ class ramLedgerFactory {
+  maxSize int
+  ledgers map[string]ledger.ReadWriter
+  mutex sync.Mutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\ram {
+ class cursor {
+  list *simpleList
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\ram {
+ class simpleList {
+  next *simpleList
+  signal chan struct { }
+  block *cb.Block
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger\\ram {
+ class ramLedger {
+  maxSize int
+  size int
+  oldest *simpleList
+  newest *simpleList
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger {
+ class NotFoundErrorIterator {
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class TopLevel {
+  General General
+  FileLedger FileLedger
+  RAMLedger RAMLedger
+  Kafka Kafka
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class General {
+  LedgerType string
+  ListenAddress string
+  ListenPort uint16
+  TLS TLS
+  GenesisMethod string
+  GenesisProfile string
+  GenesisFile string
+  Profile Profile
+  LogLevel string
+  LocalMSPDir string
+  LocalMSPID string
+  BCCSP *bccsp.FactoryOpts
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class TLS {
+  Enabled bool
+  PrivateKey string
+  Certificate string
+  RootCAs []string
+  ClientAuthEnabled bool
+  ClientRootCAs []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class Profile {
+  Enabled bool
+  Address string
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class FileLedger {
+  Location string
+  Prefix string
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class RAMLedger {
+  HistorySize uint
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class Kafka {
+  Retry Retry
+  Verbose bool
+  Version sarama.KafkaVersion
+  TLS TLS
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class Retry {
+  ShortInterval time.Duration
+  ShortTotal time.Duration
+  LongInterval time.Duration
+  LongTotal time.Duration
+  NetworkTimeouts NetworkTimeouts
+  Metadata Metadata
+  Producer Producer
+  Consumer Consumer
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class NetworkTimeouts {
+  DialTimeout time.Duration
+  ReadTimeout time.Duration
+  WriteTimeout time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class Metadata {
+  RetryMax int
+  RetryBackoff time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class Producer {
+  RetryMax int
+  RetryBackoff time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\localconfig {
+ class Consumer {
+  RetryBackoff time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\mocks\\blockcutter {
+ class Receiver {
+  QueueNext bool
+  IsolatedTx bool
+  CutNext bool
+  CurBatch []*cb.Envelope
+  Block chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\mocks\\multichain {
+ class ConsenterSupport {
+  SharedConfigVal *mockconfig.Orderer
+  BlockCutterVal *mockblockcutter.Receiver
+  Blocks chan *cb.Block
+  ChainIDVal string
+  HeightVal uint64
+  NextBlockVal *cb.Block
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ class chainSupport {
+  *ledgerResources
+  chain Chain
+  cutter blockcutter.Receiver
+  filters *filter.RuleSet
+  signer crypto.LocalSigner
+  lastConfig uint64
+  lastConfigSeq uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ class configResources {
+  configtxapi.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ class ledgerResources {
+  *configResources
+  ledger ledger.ReadWriter
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ class multiLedger {
+  chains map[string]*chainSupport
+  consenters map[string]Consenter
+  ledgerFactory ledger.Factory
+  signer crypto.LocalSigner
+  systemChannelID string
+  systemChannel *chainSupport
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ class systemChainCommitter {
+  filter *systemChainFilter
+  configTx *cb.Envelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ class systemChainFilter {
+  cc chainCreator
+  support limitedSupport
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config {
+ class broadcastClient {
+  ab.AtomicBroadcast_BroadcastClient
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config {
+ class cmdImpl {
+  name string
+  args argsImpl
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config {
+ class argsImpl {
+  consensusType string
+  creationPolicy string
+  chainID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_timestamp {
+ class broadcastClient {
+  client ab.AtomicBroadcast_BroadcastClient
+  chainID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\sample_clients\\deliver_stdout {
+ class deliverClient {
+  client ab.AtomicBroadcast_DeliverClient
+  chainID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer {
+ class configUpdateSupport {
+  multichain.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer {
+ class broadcastSupport {
+  multichain.Manager
+  broadcast.ConfigUpdateProcessor
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer {
+ class deliverSupport {
+  multichain.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer {
+ class server {
+  bh broadcast.Handler
+  dh deliver.Handler
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\solo {
+ class consenter {
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\solo {
+ class chain {
+  support multichain.ConsenterSupport
+  batchTimeout time.Duration
+  sendChan chan *cb.Envelope
+  exitChan chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\blockcutter {
+ interface Receiver  {
+  Ordered(msg *cb.Envelope)([][]*cb.Envelope,[][]filter.Committer,bool)
+  Cut()([]*cb.Envelope,[]filter.Committer)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\bootstrap {
+ interface Helper  {
+  GenesisBlock()*ab.Block
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\broadcast {
+ interface ConfigUpdateProcessor  {
+  Process(envConfigUpdate *cb.Envelope)(*cb.Envelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\broadcast {
+ interface Handler  {
+  Handle(srv ab.AtomicBroadcast_BroadcastServer)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\broadcast {
+ interface SupportManager  {
+  GetChain(chainID string)(Support,bool)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\broadcast {
+ interface Support  {
+  Enqueue(env *cb.Envelope)bool
+  Filters()*filter.RuleSet
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\deliver {
+ interface Handler  {
+  Handle(srv ab.AtomicBroadcast_DeliverServer)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\deliver {
+ interface SupportManager  {
+  GetChain(chainID string)(Support,bool)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\deliver {
+ interface Support  {
+  Sequence()uint64
+  PolicyManager()policies.Manager
+  Reader()ledger.Reader
+  Errored()chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\filter {
+ interface Rule  {
+  Apply(message *ab.Envelope)(Action,Committer)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\common\\filter {
+ interface Committer  {
+  Commit()
+  Isolated()bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\configupdate {
+ interface SupportManager  {
+  GetChain(chainID string)(Support,bool)
+  NewChannelConfig(envConfigUpdate *cb.Envelope)(configtxapi.Manager,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\configupdate {
+ interface Support  {
+  ProposeConfigUpdate(env *cb.Envelope)(*cb.ConfigEnvelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ interface channel  {
+  topic()string
+  partition()int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ interface commonConsenter  {
+  brokerConfig()*sarama.Config
+  retryOptions()localconfig.Retry
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\kafka {
+ interface closeable  {
+  close()error
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger {
+ interface Factory  {
+  GetOrCreate(chainID string)(ReadWriter,error)
+  ChainIDs()[]string
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger {
+ interface Iterator  {
+  Next()(*cb.Block,cb.Status)
+  ReadyChan()chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger {
+ interface Reader  {
+  Iterator(startType *ab.SeekPosition)(Iterator,uint64)
+  Height()uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger {
+ interface Writer  {
+  Append(block *cb.Block)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\ledger {
+ interface ReadWriter  {
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ interface Consenter  {
+  HandleChain(support ConsenterSupport,metadata *cb.Metadata)(Chain,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ interface Chain  {
+  Enqueue(env *cb.Envelope)bool
+  Errored()chan struct { }
+  Start()
+  Halt()
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ interface ConsenterSupport  {
+  BlockCutter()blockcutter.Receiver
+  SharedConfig()config.Orderer
+  CreateNextBlock(messages []*cb.Envelope)*cb.Block
+  WriteBlock(block *cb.Block,committers []filter.Committer,encodedMetadataValue []byte)*cb.Block
+  ChainID()string
+  Height()uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ interface ChainSupport  {
+  PolicyManager()policies.Manager
+  Reader()ledger.Reader
+  Errored()chan struct { }
+  Sequence()uint64
+  ProposeConfigUpdate(env *cb.Envelope)(*cb.ConfigEnvelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ interface Manager  {
+  GetChain(chainID string)(ChainSupport,bool)
+  SystemChannelID()string
+  NewChannelConfig(envConfigUpdate *cb.Envelope)(configtxapi.Manager,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ interface chainCreator  {
+  NewChannelConfig(envConfigUpdate *cb.Envelope)(configtxapi.Manager,error)
+  newChain(configTx *cb.Envelope)
+  channelsCount()int
+}
+}
+namespace github.com\\hyperledger\\fabric\\orderer\\multichain {
+ interface limitedSupport  {
+  SharedConfig()config.Orderer
+}
+}
+github.com\\hyperledger\\fabric\\orderer\\common\\blockcutter.receiver ---> github.com\\hyperledger\\fabric\\orderer\\common\\filter.RuleSet : filters
+github.com\\hyperledger\\fabric\\orderer\\kafka.consenterImpl ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.TLS : tlsConfigVal
+github.com\\hyperledger\\fabric\\orderer\\kafka.consenterImpl ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.Retry : retryOptionsVal
+github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedgerIterator ---> github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedger : ledger
+github.com\\hyperledger\\fabric\\orderer\\ledger\\json.cursor ---> github.com\\hyperledger\\fabric\\orderer\\ledger\\json.jsonLedger : jl
+github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.cursor ---> github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.simpleList : list
+github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.simpleList ---> github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.simpleList : next
+github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.ramLedger ---> github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.simpleList : oldest
+github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.ramLedger ---> github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.simpleList : newest
+github.com\\hyperledger\\fabric\\orderer\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.General : General
+github.com\\hyperledger\\fabric\\orderer\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.FileLedger : FileLedger
+github.com\\hyperledger\\fabric\\orderer\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.RAMLedger : RAMLedger
+github.com\\hyperledger\\fabric\\orderer\\localconfig.TopLevel ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.Kafka : Kafka
+github.com\\hyperledger\\fabric\\orderer\\localconfig.General ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.TLS : TLS
+github.com\\hyperledger\\fabric\\orderer\\localconfig.General ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.Profile : Profile
+github.com\\hyperledger\\fabric\\orderer\\localconfig.Kafka ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.Retry : Retry
+github.com\\hyperledger\\fabric\\orderer\\localconfig.Kafka ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.TLS : TLS
+github.com\\hyperledger\\fabric\\orderer\\localconfig.Retry ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.NetworkTimeouts : NetworkTimeouts
+github.com\\hyperledger\\fabric\\orderer\\localconfig.Retry ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.Metadata : Metadata
+github.com\\hyperledger\\fabric\\orderer\\localconfig.Retry ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.Producer : Producer
+github.com\\hyperledger\\fabric\\orderer\\localconfig.Retry ---> github.com\\hyperledger\\fabric\\orderer\\localconfig.Consumer : Consumer
+github.com\\hyperledger\\fabric\\orderer\\mocks\\multichain.ConsenterSupport ---> github.com\\hyperledger\\fabric\\orderer\\mocks\\blockcutter.Receiver : BlockCutterVal
+github.com\\hyperledger\\fabric\\orderer\\multichain.chainSupport -|> github.com\\hyperledger\\fabric\\orderer\\multichain.ledgerResources
+github.com\\hyperledger\\fabric\\orderer\\multichain.chainSupport ---> github.com\\hyperledger\\fabric\\orderer\\common\\filter.RuleSet : filters
+github.com\\hyperledger\\fabric\\orderer\\multichain.ledgerResources -|> github.com\\hyperledger\\fabric\\orderer\\multichain.configResources
+github.com\\hyperledger\\fabric\\orderer\\multichain.multiLedger ---> "*" github.com\\hyperledger\\fabric\\orderer\\multichain.chainSupport : chains
+github.com\\hyperledger\\fabric\\orderer\\multichain.multiLedger ---> github.com\\hyperledger\\fabric\\orderer\\multichain.chainSupport : systemChannel
+github.com\\hyperledger\\fabric\\orderer\\multichain.systemChainCommitter ---> github.com\\hyperledger\\fabric\\orderer\\multichain.systemChainFilter : filter
+github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config.cmdImpl ---> github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config.argsImpl : args
+github.com\\hyperledger\\fabric\\orderer\\common\\blockcutter.Receiver <|- github.com\\hyperledger\\fabric\\orderer\\common\\blockcutter.receiver
+github.com\\hyperledger\\fabric\\orderer\\common\\blockcutter.Receiver <|- github.com\\hyperledger\\fabric\\orderer\\mocks\\blockcutter.Receiver
+github.com\\hyperledger\\fabric\\orderer\\common\\bootstrap.Helper <|- github.com\\hyperledger\\fabric\\orderer\\common\\bootstrap\\file.fileBootstrapper
+github.com\\hyperledger\\fabric\\orderer\\common\\broadcast.ConfigUpdateProcessor <|- github.com\\hyperledger\\fabric\\orderer\\configupdate.Processor
+github.com\\hyperledger\\fabric\\orderer\\common\\broadcast.Handler <|- github.com\\hyperledger\\fabric\\orderer\\common\\broadcast.handlerImpl
+github.com\\hyperledger\\fabric\\orderer\\common\\broadcast.SupportManager <|- github.com\\hyperledger\\fabric\\orderer.broadcastSupport
+github.com\\hyperledger\\fabric\\orderer\\common\\broadcast.Support <|- github.com\\hyperledger\\fabric\\orderer\\multichain.chainSupport
+github.com\\hyperledger\\fabric\\orderer\\common\\deliver.Handler <|- github.com\\hyperledger\\fabric\\orderer\\common\\deliver.deliverServer
+github.com\\hyperledger\\fabric\\orderer\\common\\deliver.SupportManager <|- github.com\\hyperledger\\fabric\\orderer.deliverSupport
+github.com\\hyperledger\\fabric\\orderer\\common\\filter.Rule <|- github.com\\hyperledger\\fabric\\orderer\\common\\filter.emptyRejectRule
+github.com\\hyperledger\\fabric\\orderer\\common\\filter.Rule <|- github.com\\hyperledger\\fabric\\orderer\\common\\filter.acceptRule
+github.com\\hyperledger\\fabric\\orderer\\common\\filter.Committer <|- github.com\\hyperledger\\fabric\\orderer\\common\\configtxfilter.configCommitter
+github.com\\hyperledger\\fabric\\orderer\\common\\filter.Committer <|- github.com\\hyperledger\\fabric\\orderer\\common\\filter.noopCommitter
+github.com\\hyperledger\\fabric\\orderer\\common\\filter.Committer <|- github.com\\hyperledger\\fabric\\orderer\\multichain.systemChainCommitter
+github.com\\hyperledger\\fabric\\orderer\\kafka.channel <|- github.com\\hyperledger\\fabric\\orderer\\kafka.channelImpl
+github.com\\hyperledger\\fabric\\orderer\\kafka.commonConsenter <|- github.com\\hyperledger\\fabric\\orderer\\kafka.consenterImpl
+github.com\\hyperledger\\fabric\\orderer\\ledger.Factory <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedgerFactory
+github.com\\hyperledger\\fabric\\orderer\\ledger.Factory <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\json.jsonLedgerFactory
+github.com\\hyperledger\\fabric\\orderer\\ledger.Factory <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.ramLedgerFactory
+github.com\\hyperledger\\fabric\\orderer\\ledger.Iterator <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedgerIterator
+github.com\\hyperledger\\fabric\\orderer\\ledger.Iterator <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\json.cursor
+github.com\\hyperledger\\fabric\\orderer\\ledger.Iterator <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.cursor
+github.com\\hyperledger\\fabric\\orderer\\ledger.Iterator <|- github.com\\hyperledger\\fabric\\orderer\\ledger.NotFoundErrorIterator
+github.com\\hyperledger\\fabric\\orderer\\ledger.Reader <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.Reader <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\json.jsonLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.Reader <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.ramLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.Writer <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.Writer <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\json.jsonLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.Writer <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.ramLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\blockcutter.receiver
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\bootstrap\\file.fileBootstrapper
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\broadcast.handlerImpl
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\configtxfilter.configFilter
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\configtxfilter.configCommitter
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\deliver.deliverServer
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\filter.noopCommitter
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\filter.emptyRejectRule
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\filter.acceptRule
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\filter.RuleSet
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\sigfilter.sigFilter
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\common\\sizefilter.maxBytesRule
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\configupdate.Processor
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\kafka.chainImpl
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\kafka.channelImpl
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\kafka.consenterImpl
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\kafka.staticPartitioner
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\kafka.retryProcess
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedgerFactory
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\file.fileLedgerIterator
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\json.jsonLedgerFactory
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\json.cursor
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\json.jsonLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.ramLedgerFactory
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.cursor
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.simpleList
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger\\ram.ramLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\ledger.NotFoundErrorIterator
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.TopLevel
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.General
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.TLS
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.Profile
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.FileLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.RAMLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.Kafka
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.Retry
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.NetworkTimeouts
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.Metadata
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.Producer
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\localconfig.Consumer
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\mocks\\blockcutter.Receiver
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\mocks\\multichain.ConsenterSupport
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\multichain.chainSupport
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\multichain.configResources
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\multichain.ledgerResources
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\multichain.multiLedger
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\multichain.systemChainCommitter
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\multichain.systemChainFilter
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config.broadcastClient
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config.cmdImpl
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_config.argsImpl
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\sample_clients\\broadcast_timestamp.broadcastClient
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\sample_clients\\deliver_stdout.deliverClient
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer.configUpdateSupport
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer.broadcastSupport
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer.deliverSupport
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer.server
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\solo.consenter
+github.com\\hyperledger\\fabric\\orderer\\ledger.ReadWriter <|- github.com\\hyperledger\\fabric\\orderer\\solo.chain
+github.com\\hyperledger\\fabric\\orderer\\multichain.Consenter <|- github.com\\hyperledger\\fabric\\orderer\\kafka.consenterImpl
+github.com\\hyperledger\\fabric\\orderer\\multichain.Consenter <|- github.com\\hyperledger\\fabric\\orderer\\solo.consenter
+github.com\\hyperledger\\fabric\\orderer\\multichain.Chain <|- github.com\\hyperledger\\fabric\\orderer\\kafka.chainImpl
+github.com\\hyperledger\\fabric\\orderer\\multichain.Chain <|- github.com\\hyperledger\\fabric\\orderer\\solo.chain
+github.com\\hyperledger\\fabric\\orderer\\multichain.ConsenterSupport <|- github.com\\hyperledger\\fabric\\orderer\\mocks\\multichain.ConsenterSupport
+github.com\\hyperledger\\fabric\\orderer\\multichain.Manager <|- github.com\\hyperledger\\fabric\\orderer\\multichain.multiLedger
+github.com\\hyperledger\\fabric\\orderer\\multichain.chainCreator <|- github.com\\hyperledger\\fabric\\orderer\\multichain.multiLedger
+github.com\\hyperledger\\fabric\\orderer\\multichain.limitedSupport <|- github.com\\hyperledger\\fabric\\orderer\\mocks\\multichain.ConsenterSupport
+github.com\\hyperledger\\fabric\\orderer\\multichain.limitedSupport <|- github.com\\hyperledger\\fabric\\orderer\\multichain.configResources
+@enduml

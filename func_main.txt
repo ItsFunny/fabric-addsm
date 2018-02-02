@@ -1,0 +1,71 @@
+bddtests/regression/go/ote/ote.go:1120:func main() {
+build/docker/gotools/obj/gopath/src/github.com/golang/lint/golint/golint.go:38:func main() {
+common/configtx/tool/configtxgen/main.go:335:func main() {
+common/tools/configtxlator/main.go:43:func main() {
+common/tools/cryptogen/main.go:206:func main() {
+core/chaincode/platforms/util/utils_test.go:283:	func main() {
+core/comm/testdata/certs/generate.go:246:func main() {
+core/ledger/kvledger/example/main/example.go:69:func main() {
+core/ledger/kvledger/marble_example/main/marble_example.go:70:func main() {
+examples/ccchecker/chaincodes/newkeyperinvoke/newkeyperinvoke.go:64:func main() {
+examples/ccchecker/main.go:45:func main() {
+examples/chaincode/chaintool/example02/src/chaincode/chaincode_example02.go:118:func main() {
+examples/chaincode/go/chaincode_example01/chaincode_example01.go:99:func main() {
+examples/chaincode/go/chaincode_example02/chaincode_example02.go:194:func main() {
+examples/chaincode/go/chaincode_example03/chaincode_example03.go:95:func main() {
+examples/chaincode/go/chaincode_example04/chaincode_example04.go:162:func main() {
+examples/chaincode/go/chaincode_example05/chaincode_example05.go:203:func main() {
+examples/chaincode/go/eventsender/eventsender.go:93:func main() {
+examples/chaincode/go/invokereturnsvalue/invokereturnsvalue.go:134:func main() {
+examples/chaincode/go/map/map.go:201:func main() {
+examples/chaincode/go/marbles02/marbles_chaincode.go:104:func main() {
+examples/chaincode/go/passthru/passthru.go:60:func main() {
+examples/chaincode/go/sleeper/sleeper.go:119:func main() {
+examples/chaincode/go/utxo/chaincode.go:99:func main() {
+examples/e2e_cli/examples/chaincode/go/chaincode_example02/chaincode_example02.go:194:func main() {
+examples/events/block-listener/block-listener.go:137:func main() {
+orderer/main.go:61:func main() {
+orderer/sample_clients/broadcast_config/client.go:90:func main() {
+orderer/sample_clients/broadcast_timestamp/client.go:71:func main() {
+orderer/sample_clients/deliver_stdout/client.go:98:func main() {
+orderer/sample_clients/single_tx_client/single_tx_client.go:42:func main() {
+peer/main.go:75:func main() {
+test/chaincodes/AuctionApp/art.go:236:func main() {
+test/chaincodes/AutoVendor/chaincode/main.go:36:func main() {
+test/chaincodes/BadImport/main.go:20:func main() {
+test/tools/PTE/chaincode_sample.go:175:func main() {
+vendor/github.com/DATA-DOG/godog/cmd/godog/main.go:58:func main() {
+vendor/github.com/docker/docker/pkg/archive/example_changes.go:27:func main() {
+vendor/github.com/docker/docker/pkg/mflag/example/example.go:26:func main() {
+vendor/github.com/docker/docker/pkg/namesgenerator/cmd/names-generator/main.go:9:func main() {
+vendor/github.com/docker/docker/pkg/plugins/pluginrpc-gen/main.go:60:func main() {
+vendor/github.com/golang/protobuf/proto/lib.go:234:	func main() {
+vendor/github.com/golang/protobuf/protoc-gen-go/main.go:59:func main() {
+vendor/github.com/gorilla/mux/doc.go:28:	func main() {
+vendor/github.com/gorilla/mux/doc.go:152:	func main() {
+vendor/github.com/gorilla/mux/mux.go:28://     func main() {
+vendor/github.com/manudrijvers/amcl/go/AES.go:602:func main() {
+vendor/github.com/manudrijvers/amcl/go/BIG.go:834:func main() {
+vendor/github.com/manudrijvers/amcl/go/ECP.go:861:func main() {
+vendor/github.com/manudrijvers/amcl/go/FF.go:843:func main() {
+vendor/github.com/manudrijvers/amcl/go/GCM.go:286:func main() {
+vendor/github.com/manudrijvers/amcl/go/HASH256.go:179:func main() {
+vendor/github.com/manudrijvers/amcl/go/HASH384.go:191:func main() {
+vendor/github.com/manudrijvers/amcl/go/HASH512.go:191:func main() {
+vendor/github.com/manudrijvers/amcl/go/PAIR.go:581:func main() {
+vendor/github.com/manudrijvers/amcl/go/RAND.go:140:func main() {
+vendor/github.com/Shopify/sarama/examples/http_server/http_server.go:29:func main() {
+vendor/github.com/Shopify/sarama/tools/kafka-console-consumer/kafka-console-consumer.go:27:func main() {
+vendor/github.com/Shopify/sarama/tools/kafka-console-partitionconsumer/kafka-console-partitionconsumer.go:25:func main() {
+vendor/github.com/Shopify/sarama/tools/kafka-console-producer/kafka-console-producer.go:29:func main() {
+vendor/github.com/Sirupsen/logrus/doc.go:13:  func main() {
+vendor/golang.org/x/net/html/atom/gen.go:45:func main() {
+vendor/golang.org/x/net/internal/iana/gen.go:44:func main() {
+vendor/golang.org/x/net/ipv4/gen.go:29:func main() {
+vendor/golang.org/x/net/ipv6/gen.go:29:func main() {
+vendor/golang.org/x/net/publicsuffix/gen.go:119:func main() {
+vendor/golang.org/x/net/publicsuffix/gen.go:126:func main1() error {
+vendor/golang.org/x/net/webdav/litmus_test_server.go:32:func main() {
+vendor/golang.org/x/sys/unix/mkpost.go:23:func main() {
+vendor/golang.org/x/tools/cmd/cover/cover.go:69:func main() {
+vendor/gopkg.in/alecthomas/kingpin.v2/doc.go:54://     func main() {

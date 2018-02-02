@@ -1,0 +1,124 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\peer\\chaincode {
+ class ChaincodeCmdFactory {
+  EndorserClient pb.EndorserClient
+  Signer msp.SigningIdentity
+  BroadcastClient common.BroadcastClient
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\channel {
+ class ChannelCmdFactory {
+  EndorserClient pb.EndorserClient
+  Signer msp.SigningIdentity
+  BroadcastClient common.BroadcastClient
+  DeliverClient deliverClientIntf
+  BroadcastFactory BroadcastClientFactory
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\channel {
+ class deliverClient {
+  conn *grpc.ClientConn
+  client ab.AtomicBroadcast_DeliverClient
+  chainID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\channel {
+ class endorserClient {
+  cf *ChannelCmdFactory
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\clilogging {
+ class LoggingCmdFactory {
+  AdminClient pb.AdminClient
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\common {
+ class mockEndorserClient {
+  response *pb.ProposalResponse
+  err error
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\common {
+ class mockBroadcastClient {
+  err error
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\common {
+ class mockAdminClient {
+  status *pb.ServerStatus
+  err error
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\common {
+ class broadcastClient {
+  conn *grpc.ClientConn
+  client ab.AtomicBroadcast_BroadcastClient
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip {
+ class mspMessageCryptoService {
+  channelPolicyManagerGetter policies.ChannelPolicyManagerGetter
+  localSigner crypto.LocalSigner
+  deserializer mgmt.DeserializersManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip\\mocks {
+ class ChannelPolicyManagerGetter {
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip\\mocks {
+ class ChannelPolicyManagerGetterWithManager {
+  Managers map[string]policies.Manager
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip\\mocks {
+ class ChannelPolicyManager {
+  Policy policies.Policy
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip\\mocks {
+ class Policy {
+  Deserializer msp.IdentityDeserializer
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip\\mocks {
+ class DeserializersManager {
+  LocalDeserializer msp.IdentityDeserializer
+  ChannelDeserializers map[string]msp.IdentityDeserializer
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip\\mocks {
+ class IdentityDeserializer {
+  Identity []byte
+  Msg []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip\\mocks {
+ class Identity {
+  Msg []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\gossip {
+ class mspSecurityAdvisor {
+  deserializer mgmt.DeserializersManager
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\channel {
+ interface deliverClientIntf  {
+  getSpecifiedBlock(num uint64)(*common.Block,error)
+  getOldestBlock()(*common.Block,error)
+  getNewestBlock()(*common.Block,error)
+  Close()error
+}
+}
+namespace github.com\\hyperledger\\fabric\\peer\\common {
+ interface BroadcastClient  {
+  Send(env *cb.Envelope)error
+  Close()error
+}
+}
+github.com\\hyperledger\\fabric\\peer\\channel.endorserClient ---> github.com\\hyperledger\\fabric\\peer\\channel.ChannelCmdFactory : cf
+github.com\\hyperledger\\fabric\\peer\\channel.deliverClientIntf <|- github.com\\hyperledger\\fabric\\peer\\channel.deliverClient
+github.com\\hyperledger\\fabric\\peer\\common.BroadcastClient <|- github.com\\hyperledger\\fabric\\peer\\common.mockBroadcastClient
+github.com\\hyperledger\\fabric\\peer\\common.BroadcastClient <|- github.com\\hyperledger\\fabric\\peer\\common.broadcastClient
+@enduml

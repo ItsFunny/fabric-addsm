@@ -1,0 +1,131 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class ccInfoCacheImpl {
+  sync.RWMutex
+  cache map[string]*ChaincodeData
+  cacheSupport CCCacheSupport
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CCInfoFSImpl {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CCContext {
+  ChainID string
+  Name string
+  Version string
+  TxID string
+  Syscc bool
+  SignedProposal *pb.SignedProposal
+  Proposal *pb.Proposal
+  canonicalName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class ChaincodeData {
+  Name string
+  Version string
+  Escc string
+  Vscc string
+  Policy []byte
+  Data []byte
+  Id []byte
+  InstantiationPolicy []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CDSData {
+  CodeHash []byte
+  MetaDataHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class CDSPackage {
+  buf []byte
+  depSpec *pb.ChaincodeDeploymentSpec
+  data *CDSData
+  datab []byte
+  id []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class SignedCDSData {
+  CodeHash []byte
+  MetaDataHash []byte
+  SignatureHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ class SignedCDSPackage {
+  buf []byte
+  depSpec *pb.ChaincodeDeploymentSpec
+  sDepSpec *pb.SignedChaincodeDeploymentSpec
+  env *common.Envelope
+  data *SignedCDSData
+  datab []byte
+  id []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\sysccprovider {
+ class ChaincodeInstance {
+  ChainID string
+  ChaincodeName string
+  ChaincodeVersion string
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface CCPackage  {
+  InitFromBuffer(buf []byte)(*ChaincodeData,error)
+  InitFromFS(ccname string,ccversion string)([]byte,*pb.ChaincodeDeploymentSpec,error)
+  PutChaincodeToFS()error
+  GetDepSpec()*pb.ChaincodeDeploymentSpec
+  GetDepSpecBytes()[]byte
+  ValidateCC(ccdata *ChaincodeData)error
+  GetPackageObject()proto.Message
+  GetChaincodeData()*ChaincodeData
+  GetId()[]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface CCCacheSupport  {
+  GetChaincode(ccname string,ccversion string)(CCPackage,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface ChaincodeProvider  {
+  GetContext(ledger ledger.PeerLedger)(context.Context,error)
+  GetCCContext(cid,name,version,txid string,syscc bool,signedProp *pb.SignedProposal,prop *pb.Proposal)interface  { }
+  GetCCValidationInfoFromLSCC(ctxt context.Context,txid string,signedProp *pb.SignedProposal,prop *pb.Proposal,chainID string,chaincodeID string)(string,[]byte,error)
+  ExecuteChaincode(ctxt context.Context,cccid interface  { },args [][]byte)(*pb.Response,*pb.ChaincodeEvent,error)
+  Execute(ctxt context.Context,cccid interface  { },spec interface  { })(*pb.Response,*pb.ChaincodeEvent,error)
+  ExecuteWithErrorFilter(ctxt context.Context,cccid interface  { },spec interface  { })([]byte,*pb.ChaincodeEvent,error)
+  Stop(ctxt context.Context,cccid interface  { },spec *pb.ChaincodeDeploymentSpec)error
+  ReleaseContext()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\ccprovider {
+ interface ChaincodeProviderFactory  {
+  NewChaincodeProvider()ChaincodeProvider
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\sysccprovider {
+ interface SystemChaincodeProvider  {
+  IsSysCC(name string)bool
+  IsSysCCAndNotInvokableCC2CC(name string)bool
+  IsSysCCAndNotInvokableExternal(name string)bool
+  GetQueryExecutorForLedger(cid string)(ledger.QueryExecutor,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\common\\sysccprovider {
+ interface SystemChaincodeProviderFactory  {
+  NewSystemChaincodeProvider()SystemChaincodeProvider
+}
+}
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ccInfoCacheImpl ---> "*" github.com\\hyperledger\\fabric\\core\\common\\ccprovider.ChaincodeData : cache
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSPackage ---> github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSData : data
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSPackage ---> github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSData : data
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCPackage <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CDSPackage
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCPackage <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.SignedCDSPackage
+github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCCacheSupport <|- github.com\\hyperledger\\fabric\\core\\common\\ccprovider.CCInfoFSImpl
+@enduml

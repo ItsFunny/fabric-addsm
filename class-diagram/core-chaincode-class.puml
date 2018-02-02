@@ -1,0 +1,322 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ccProviderFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ccProviderImpl {
+  txsim ledger.TxSimulator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ccProviderContextImpl {
+  ctx *ccprovider.CCContext
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class chaincodeRTEnv {
+  handler *Handler
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class runningChaincodes {
+  sync.RWMutex
+  chaincodeMap map[string]*chaincodeRTEnv
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class ChaincodeSupport {
+  runningChaincodes *runningChaincodes
+  peerAddress string
+  ccStartupTimeout time.Duration
+  peerNetworkID string
+  peerID string
+  peerTLSCertFile string
+  peerTLSKeyFile string
+  peerTLSSvrHostOrd string
+  keepalive time.Duration
+  chaincodeLogLevel string
+  shimLogLevel string
+  logFormat string
+  executetimeout time.Duration
+  userRunsCC bool
+  peerTLS bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class DuplicateChaincodeHandlerError {
+  ChaincodeID *pb.ChaincodeID
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class transactionContext {
+  chainID string
+  signedProp *pb.SignedProposal
+  proposal *pb.Proposal
+  responseNotifier chan *pb.ChaincodeMessage
+  queryIteratorMap map[string]commonledger.ResultsIterator
+  txsimulator ledger.TxSimulator
+  historyQueryExecutor ledger.HistoryQueryExecutor
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class nextStateInfo {
+  msg *pb.ChaincodeMessage
+  sendToCC bool
+  sendSync bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ class Handler {
+  sync.RWMutex
+  serialLock sync.Mutex
+  ChatStream ccintf.ChaincodeStream
+  FSM *fsm.FSM
+  ChaincodeID *pb.ChaincodeID
+  ccInstance *sysccprovider.ChaincodeInstance
+  chaincodeSupport *ChaincodeSupport
+  registered bool
+  readyNotify chan bool
+  txCtxs map[string]*transactionContext
+  txidMap map[string]bool
+  nextState chan *nextStateInfo
+  policyChecker policy.PolicyChecker
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car {
+ class Platform {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang {
+ class CodeDescriptor {
+  Gopath,Pkg string
+  Cleanup func()
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang {
+ class SourceDescriptor {
+  Name,Path string
+  Info os.FileInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang {
+ class Platform {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java {
+ class Platform {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\util {
+ class DockerBuildOptions {
+  Image string
+  Env []string
+  Cmd string
+  InputStream io.Reader
+  OutputStream io.Writer
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class ChaincodeStub {
+  TxID string
+  chaincodeEvent *pb.ChaincodeEvent
+  args [][]byte
+  handler *Handler
+  signedProposal *pb.SignedProposal
+  proposal *pb.Proposal
+  creator []byte
+  transient map[string][]byte
+  binding []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class CommonIterator {
+  handler *Handler
+  uuid string
+  response *pb.QueryResponse
+  currentLoc int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class StateQueryIterator {
+  *CommonIterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class HistoryQueryIterator {
+  *CommonIterator
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class ChaincodeLogger {
+  logger *logging.Logger
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class nextStateInfo {
+  msg *pb.ChaincodeMessage
+  sendToCC bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class Handler {
+  sync.RWMutex
+  serialLock sync.Mutex
+  To string
+  ChatStream PeerChaincodeStream
+  FSM *fsm.FSM
+  cc Chaincode
+  responseChannel map[string]chan pb.ChaincodeMessage
+  nextState chan *nextStateInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class inProcStream {
+  recv chan *pb.ChaincodeMessage
+  send chan *pb.ChaincodeMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class MockStub {
+  args [][]byte
+  cc Chaincode
+  Name string
+  State map[string][]byte
+  Keys *list.List
+  Invokables map[string]*MockStub
+  TxID string
+  TxTimestamp *timestamp.Timestamp
+  signedProposal *pb.SignedProposal
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ class MockStateRangeQueryIterator {
+  Closed bool
+  Stub *MockStub
+  StartKey string
+  EndKey string
+  Current *list.Element
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode {
+ interface MessageHandler  {
+  HandleMessage(msg *pb.ChaincodeMessage)error
+  SendMessage(msg *pb.ChaincodeMessage)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\platforms {
+ interface Platform  {
+  ValidateSpec(spec *pb.ChaincodeSpec)error
+  ValidateDeploymentSpec(spec *pb.ChaincodeDeploymentSpec)error
+  GetDeploymentPayload(spec *pb.ChaincodeSpec)([]byte,error)
+  GenerateDockerfile(spec *pb.ChaincodeDeploymentSpec)(string,error)
+  GenerateDockerBuild(spec *pb.ChaincodeDeploymentSpec,tw *tar.Writer)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface PeerChaincodeStream  {
+  Send(*pb.ChaincodeMessage)error
+  Recv()(*pb.ChaincodeMessage,error)
+  CloseSend()error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface Chaincode  {
+  Init(stub ChaincodeStubInterface)pb.Response
+  Invoke(stub ChaincodeStubInterface)pb.Response
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface ChaincodeStubInterface  {
+  GetArgs()[][]byte
+  GetStringArgs()[]string
+  GetFunctionAndParameters()(string,[]string)
+  GetArgsSlice()([]byte,error)
+  GetTxID()string
+  InvokeChaincode(chaincodeName string,args [][]byte,channel string)pb.Response
+  GetState(key string)([]byte,error)
+  PutState(key string,value []byte)error
+  DelState(key string)error
+  GetStateByRange(startKey,endKey string)(StateQueryIteratorInterface,error)
+  GetStateByPartialCompositeKey(objectType string,keys []string)(StateQueryIteratorInterface,error)
+  CreateCompositeKey(objectType string,attributes []string)(string,error)
+  SplitCompositeKey(compositeKey string)(string,[]string,error)
+  GetQueryResult(query string)(StateQueryIteratorInterface,error)
+  GetHistoryForKey(key string)(HistoryQueryIteratorInterface,error)
+  GetCreator()([]byte,error)
+  GetTransient()(map[string][]byte,error)
+  GetBinding()([]byte,error)
+  GetSignedProposal()(*pb.SignedProposal,error)
+  GetTxTimestamp()(*timestamp.Timestamp,error)
+  SetEvent(name string,payload []byte)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface CommonIteratorInterface  {
+  HasNext()bool
+  Close()error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface StateQueryIteratorInterface  {
+  Next()(*queryresult.KV,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface HistoryQueryIteratorInterface  {
+  Next()(*queryresult.KeyModification,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\chaincode\\shim {
+ interface MockQueryIteratorInterface  {
+}
+}
+github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv ---> github.com\\hyperledger\\fabric\\core\\chaincode.Handler : handler
+github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes ---> "*" github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv : chaincodeMap
+github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport ---> github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes : runningChaincodes
+github.com\\hyperledger\\fabric\\core\\chaincode.Handler ---> github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport : chaincodeSupport
+github.com\\hyperledger\\fabric\\core\\chaincode.Handler ---> "*" github.com\\hyperledger\\fabric\\core\\chaincode.transactionContext : txCtxs
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub ---> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler : handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator ---> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler : handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator -|> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator -|> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub ---> "*" github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub : Invokables
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator ---> github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub : Stub
+github.com\\hyperledger\\fabric\\core\\chaincode\\platforms.Platform <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\platforms.Platform <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\platforms.Platform <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.PeerChaincodeStream <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.inProcStream
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStubInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStubInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderFactory
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ccProviderContextImpl
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.chaincodeRTEnv
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.runningChaincodes
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.ChaincodeSupport
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.DuplicateChaincodeHandlerError
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.transactionContext
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode.Handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\car.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.CodeDescriptor
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.SourceDescriptor
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\golang.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\java.Platform
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\platforms\\util.DockerBuildOptions
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.CommonIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.StateQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.HistoryQueryIterator
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.ChaincodeLogger
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.nextStateInfo
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.Handler
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.inProcStream
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStub
+github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockQueryIteratorInterface <|- github.com\\hyperledger\\fabric\\core\\chaincode\\shim.MockStateRangeQueryIterator
+@enduml

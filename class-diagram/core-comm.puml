@@ -1,0 +1,97 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class KeepaliveOptions {
+  ClientKeepaliveTime int
+  ClientKeepaliveTimeout int
+  ServerKeepaliveTime int
+  ServerKeepaliveTimeout int
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class CASupport {
+  sync.RWMutex
+  AppRootCAsByChain map[string][][]byte
+  OrdererRootCAsByChain map[string][][]byte
+  ClientRootCAs [][]byte
+  ServerRootCAs [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class serverCreds {
+  serverConfig *tls.Config
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class connProducer {
+  sync.RWMutex
+  endpoints []string
+  connect ConnectionFactory
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class SecureServerConfig {
+  ServerCertificate []byte
+  ServerKey []byte
+  ServerRootCAs [][]byte
+  ClientRootCAs [][]byte
+  UseTLS bool
+  RequireClientCert bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ class grpcServerImpl {
+  address string
+  listener net.Listener
+  server *grpc.Server
+  serverCertificate tls.Certificate
+  serverKeyPEM []byte
+  serverRootCAs []tls.Certificate
+  lock *sync.Mutex
+  clientRootCAs map[string]*x509.Certificate
+  tlsConfig *tls.Config
+  tlsEnabled bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ class Empty {
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ class testServiceClient {
+  cc *grpc1.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ interface ConnectionProducer  {
+  NewConnection()(*grpc.ClientConn,string,error)
+  UpdateEndpoints(endpoints []string)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm {
+ interface GRPCServer  {
+  Address()string
+  Start()error
+  Stop()
+  Server()*grpc.Server
+  Listener()net.Listener
+  ServerCertificate()tls.Certificate
+  TLSEnabled()bool
+  AppendClientRootCAs(clientRoots [][]byte)error
+  RemoveClientRootCAs(clientRoots [][]byte)error
+  SetClientRootCAs(clientRoots [][]byte)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ interface TestServiceClient  {
+  EmptyCall(ctx context.Context,in *Empty,opts ... grpc1.CallOption)(*Empty,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc {
+ interface TestServiceServer  {
+  EmptyCall(context.Context,*Empty)(*Empty,error)
+}
+}
+github.com\\hyperledger\\fabric\\core\\comm.ConnectionProducer <|- github.com\\hyperledger\\fabric\\core\\comm.connProducer
+github.com\\hyperledger\\fabric\\core\\comm.GRPCServer <|- github.com\\hyperledger\\fabric\\core\\comm.grpcServerImpl
+github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.TestServiceClient <|- github.com\\hyperledger\\fabric\\core\\comm\\testdata\\grpc.testServiceClient
+@enduml

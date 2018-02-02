@@ -1,0 +1,1663 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class asn1Header {
+  Number int64
+  PreviousHash []byte
+  DataHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class LastConfig {
+  Index uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Metadata {
+  Value []byte
+  Signatures []*MetadataSignature
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class MetadataSignature {
+  SignatureHeader []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Header {
+  ChannelHeader []byte
+  SignatureHeader []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ChannelHeader {
+  Type int32
+  Version int32
+  Timestamp *google_protobuf.Timestamp
+  ChannelId string
+  TxId string
+  Epoch uint64
+  Extension []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class SignatureHeader {
+  Creator []byte
+  Nonce []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Payload {
+  Header *Header
+  Data []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Envelope {
+  Payload []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Block {
+  Header *BlockHeader
+  Data *BlockData
+  Metadata *BlockMetadata
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class BlockHeader {
+  Number uint64
+  PreviousHash []byte
+  DataHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class BlockData {
+  Data [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class BlockMetadata {
+  Metadata [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigEnvelope {
+  Config *Config
+  LastUpdate *Envelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigGroupSchema {
+  Groups map[string]*ConfigGroupSchema
+  Values map[string]*ConfigValueSchema
+  Policies map[string]*ConfigPolicySchema
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigValueSchema {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigPolicySchema {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Config {
+  Sequence uint64
+  ChannelGroup *ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigUpdateEnvelope {
+  ConfigUpdate []byte
+  Signatures []*ConfigSignature
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigUpdate {
+  ChannelId string
+  ReadSet *ConfigGroup
+  WriteSet *ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigGroup {
+  Version uint64
+  Groups map[string]*ConfigGroup
+  Values map[string]*ConfigValue
+  Policies map[string]*ConfigPolicy
+  ModPolicy string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigValue {
+  Version uint64
+  Value []byte
+  ModPolicy string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigPolicy {
+  Version uint64
+  Policy *Policy
+  ModPolicy string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ConfigSignature {
+  SignatureHeader []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicChannelGroup {
+  *ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicChannelConfigValue {
+  *ConfigValue
+  name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicConsortiumsGroupFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicConsortiumsGroup {
+  *ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicConsortiumGroup {
+  *ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicConsortiumConfigValue {
+  *ConfigValue
+  name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicConsortiumOrgGroup {
+  *ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class DynamicConsortiumOrgConfigValue {
+  *ConfigValue
+  name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class HashingAlgorithm {
+  Name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class BlockDataHashingStructure {
+  Width uint32
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class OrdererAddresses {
+  Addresses []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Consortium {
+  Name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class BlockchainInfo {
+  Height uint64
+  CurrentBlockHash []byte
+  PreviousBlockHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class Policy {
+  Type int32
+  Value []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class SignaturePolicyEnvelope {
+  Version int32
+  Rule *SignaturePolicy
+  Identities []*common1.MSPPrincipal
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class SignaturePolicy {
+  Type isSignaturePolicy_Type
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class SignaturePolicy_SignedBy {
+  SignedBy int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class SignaturePolicy_NOutOf_ {
+  NOutOf *SignaturePolicy_NOutOf
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class SignaturePolicy_NOutOf {
+  N int32
+  Rules []*SignaturePolicy
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class ImplicitMetaPolicy {
+  SubPolicy string
+  Rule ImplicitMetaPolicy_Rule
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ class SignedData {
+  Data []byte
+  Identity []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class msgComparator {
+  dataBlockStorageSize int
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class ConnectionInfo {
+  ID common.PKIidType
+  Auth *AuthInfo
+  Identity api.PeerIdentityType
+  Endpoint string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class AuthInfo {
+  SignedData []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class SignedGossipMessage {
+  *Envelope
+  *GossipMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class Envelope {
+  Payload []byte
+  Signature []byte
+  SecretEnvelope *SecretEnvelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class SecretEnvelope {
+  Payload []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class Secret {
+  Content isSecret_Content
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class Secret_InternalEndpoint {
+  InternalEndpoint string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage {
+  Nonce uint64
+  Channel []byte
+  Tag GossipMessage_Tag
+  Content isGossipMessage_Content
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_AliveMsg {
+  AliveMsg *AliveMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_MemReq {
+  MemReq *MembershipRequest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_MemRes {
+  MemRes *MembershipResponse
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_DataMsg {
+  DataMsg *DataMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_Hello {
+  Hello *GossipHello
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_DataDig {
+  DataDig *DataDigest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_DataReq {
+  DataReq *DataRequest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_DataUpdate {
+  DataUpdate *DataUpdate
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_Empty {
+  Empty *Empty
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_Conn {
+  Conn *ConnEstablish
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_StateInfo {
+  StateInfo *StateInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_StateSnapshot {
+  StateSnapshot *StateInfoSnapshot
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_StateInfoPullReq {
+  StateInfoPullReq *StateInfoPullRequest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_StateRequest {
+  StateRequest *RemoteStateRequest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_StateResponse {
+  StateResponse *RemoteStateResponse
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_LeadershipMsg {
+  LeadershipMsg *LeadershipMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipMessage_PeerIdentity {
+  PeerIdentity *PeerIdentity
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class StateInfo {
+  Metadata []byte
+  Timestamp *PeerTime
+  PkiId []byte
+  Channel_MAC []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class StateInfoSnapshot {
+  Elements []*Envelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class StateInfoPullRequest {
+  Channel_MAC []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class ConnEstablish {
+  PkiId []byte
+  Identity []byte
+  TlsCertHash []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class PeerIdentity {
+  PkiId []byte
+  Cert []byte
+  Metadata []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class DataRequest {
+  Nonce uint64
+  Digests []string
+  MsgType PullMsgType
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class GossipHello {
+  Nonce uint64
+  Metadata []byte
+  MsgType PullMsgType
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class DataUpdate {
+  Nonce uint64
+  Data []*Envelope
+  MsgType PullMsgType
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class DataDigest {
+  Nonce uint64
+  Digests []string
+  MsgType PullMsgType
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class DataMessage {
+  Payload *Payload
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class Payload {
+  SeqNum uint64
+  Data []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class AliveMessage {
+  Membership *Member
+  Timestamp *PeerTime
+  Identity []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class LeadershipMessage {
+  PkiId []byte
+  Timestamp *PeerTime
+  IsDeclaration bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class PeerTime {
+  IncNum uint64
+  SeqNum uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class MembershipRequest {
+  SelfInformation *Envelope
+  Known [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class MembershipResponse {
+  Alive []*Envelope
+  Dead []*Envelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class Member {
+  Endpoint string
+  Metadata []byte
+  PkiId []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class Empty {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class RemoteStateRequest {
+  StartSeqNum uint64
+  EndSeqNum uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class RemoteStateResponse {
+  Payloads []*Payload
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class gossipClient {
+  cc *grpc.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class gossipGossipStreamClient {
+  grpc.ClientStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ class gossipGossipStreamServer {
+  grpc.ServerStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\queryresult {
+ class KV {
+  Namespace string
+  Key string
+  Value []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\queryresult {
+ class KeyModification {
+  TxId string
+  Value []byte
+  Timestamp *google_protobuf.Timestamp
+  IsDelete bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class KVRWSet {
+  Reads []*KVRead
+  RangeQueriesInfo []*RangeQueryInfo
+  Writes []*KVWrite
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class KVRead {
+  Key string
+  Version *Version
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class KVWrite {
+  Key string
+  IsDelete bool
+  Value []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class Version {
+  BlockNum uint64
+  TxNum uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class RangeQueryInfo {
+  StartKey string
+  EndKey string
+  ItrExhausted bool
+  ReadsInfo isRangeQueryInfo_ReadsInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class RangeQueryInfo_RawReads {
+  RawReads *QueryReads
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class RangeQueryInfo_ReadsMerkleHashes {
+  ReadsMerkleHashes *QueryReadsMerkleSummary
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class QueryReads {
+  KvReads []*KVRead
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ class QueryReadsMerkleSummary {
+  MaxDegree uint32
+  MaxLevel uint32
+  MaxLevelHashes [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset {
+ class TxReadWriteSet {
+  DataModel TxReadWriteSet_DataModel
+  NsRwset []*NsReadWriteSet
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset {
+ class NsReadWriteSet {
+  Namespace string
+  Rwset []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class SerializedIdentity {
+  Mspid string
+  IdBytes []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class MSPConfig {
+  Type int32
+  Config []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class FabricMSPConfig {
+  Name string
+  RootCerts [][]byte
+  IntermediateCerts [][]byte
+  Admins [][]byte
+  RevocationList [][]byte
+  SigningIdentity *SigningIdentityInfo
+  OrganizationalUnitIdentifiers []*FabricOUIdentifier
+  CryptoConfig *FabricCryptoConfig
+  TlsRootCerts [][]byte
+  TlsIntermediateCerts [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class FabricCryptoConfig {
+  SignatureHashFamily string
+  IdentityIdentifierHashFunction string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class SigningIdentityInfo {
+  PublicSigner []byte
+  PrivateSigner *KeyInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class KeyInfo {
+  KeyIdentifier string
+  KeyMaterial []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class FabricOUIdentifier {
+  Certificate []byte
+  OrganizationalUnitIdentifier string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class MSPPrincipal {
+  PrincipalClassification MSPPrincipal_Classification
+  Principal []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class OrganizationUnit {
+  MspIdentifier string
+  OrganizationalUnitIdentifier string
+  CertifiersIdentifier []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\msp {
+ class MSPRole {
+  MspIdentifier string
+  Role MSPRole_MSPRoleType
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class BroadcastResponse {
+  Status common.Status
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekNewest {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekOldest {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekSpecified {
+  Number uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekPosition {
+  Type isSeekPosition_Type
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekPosition_Newest {
+  Newest *SeekNewest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekPosition_Oldest {
+  Oldest *SeekOldest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekPosition_Specified {
+  Specified *SeekSpecified
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class SeekInfo {
+  Start *SeekPosition
+  Stop *SeekPosition
+  Behavior SeekInfo_SeekBehavior
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DeliverResponse {
+  Type isDeliverResponse_Type
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DeliverResponse_Status {
+  Status common.Status
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DeliverResponse_Block {
+  Block *common.Block
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class atomicBroadcastClient {
+  cc *grpc.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class atomicBroadcastBroadcastClient {
+  grpc.ClientStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class atomicBroadcastDeliverClient {
+  grpc.ClientStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class atomicBroadcastBroadcastServer {
+  grpc.ServerStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class atomicBroadcastDeliverServer {
+  grpc.ServerStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DynamicOrdererGroupFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DynamicOrdererGroup {
+  *common.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DynamicOrdererOrgGroup {
+  *common.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DynamicOrdererConfigValue {
+  *common.ConfigValue
+  name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class DynamicOrdererOrgConfigValue {
+  *common.ConfigValue
+  name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class ConsensusType {
+  Type string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class BatchSize {
+  MaxMessageCount uint32
+  AbsoluteMaxBytes uint32
+  PreferredMaxBytes uint32
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class BatchTimeout {
+  Timeout string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaBrokers {
+  Brokers []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class ChannelRestrictions {
+  MaxCount uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMessage {
+  Type isKafkaMessage_Type
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMessage_Regular {
+  Regular *KafkaMessageRegular
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMessage_TimeToCut {
+  TimeToCut *KafkaMessageTimeToCut
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMessage_Connect {
+  Connect *KafkaMessageConnect
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMessageRegular {
+  Payload []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMessageTimeToCut {
+  BlockNumber uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMessageConnect {
+  Payload []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ class KafkaMetadata {
+  LastOffsetPersisted int64
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ServerStatus {
+  Status ServerStatus_StatusCode
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class LogLevelRequest {
+  LogModule string
+  LogLevel string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class LogLevelResponse {
+  LogModule string
+  LogLevel string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class adminClient {
+  cc *grpc.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeID {
+  Path string
+  Name string
+  Version string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeInput {
+  Args [][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeSpec {
+  Type ChaincodeSpec_Type
+  ChaincodeId *ChaincodeID
+  Input *ChaincodeInput
+  Timeout int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeDeploymentSpec {
+  ChaincodeSpec *ChaincodeSpec
+  EffectiveDate *google_protobuf1.Timestamp
+  CodePackage []byte
+  ExecEnv ChaincodeDeploymentSpec_ExecutionEnvironment
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeInvocationSpec {
+  ChaincodeSpec *ChaincodeSpec
+  IdGenerationAlg string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeEvent {
+  ChaincodeId string
+  TxId string
+  EventName string
+  Payload []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeMessage {
+  Type ChaincodeMessage_Type
+  Timestamp *google_protobuf1.Timestamp
+  Payload []byte
+  Txid string
+  Proposal *SignedProposal
+  ChaincodeEvent *ChaincodeEvent
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class PutStateInfo {
+  Key string
+  Value []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class GetStateByRange {
+  StartKey string
+  EndKey string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class GetQueryResult {
+  Query string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class GetHistoryForKey {
+  Key string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class QueryStateNext {
+  Id string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class QueryStateClose {
+  Id string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class QueryResultBytes {
+  ResultBytes []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class QueryResponse {
+  Results []*QueryResultBytes
+  HasMore bool
+  Id string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class chaincodeSupportClient {
+  cc *grpc.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class chaincodeSupportRegisterClient {
+  grpc.ClientStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class chaincodeSupportRegisterServer {
+  grpc.ServerStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class strArgs {
+  Function string
+  Args []string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class DynamicApplicationGroupFactory {
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class DynamicApplicationGroup {
+  *common.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class DynamicApplicationOrgGroup {
+  *common.ConfigGroup
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class DynamicApplicationConfigValue {
+  *common.ConfigValue
+  name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class DynamicApplicationOrgConfigValue {
+  *common.ConfigValue
+  name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class AnchorPeers {
+  AnchorPeers []*AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class AnchorPeer {
+  Host string
+  Port int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeReg {
+  ChaincodeId string
+  EventName string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Interest {
+  EventType EventType
+  RegInfo isInterest_RegInfo
+  ChainID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Interest_ChaincodeRegInfo {
+  ChaincodeRegInfo *ChaincodeReg
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Register {
+  Events []*Interest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Rejection {
+  Tx *Transaction
+  ErrorMsg string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Unregister {
+  Events []*Interest
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class SignedEvent {
+  Signature []byte
+  EventBytes []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Event {
+  Event isEvent_Event
+  Creator []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Event_Register {
+  Register *Register
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Event_Block {
+  Block *common.Block
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Event_ChaincodeEvent {
+  ChaincodeEvent *ChaincodeEvent
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Event_Rejection {
+  Rejection *Rejection
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Event_Unregister {
+  Unregister *Unregister
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class eventsClient {
+  cc *grpc.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class eventsChatClient {
+  grpc.ClientStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class eventsChatServer {
+  grpc.ServerStream
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class PeerID {
+  Name string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class PeerEndpoint {
+  Id *PeerID
+  Address string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class endorserClient {
+  cc *grpc.ClientConn
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class SignedProposal {
+  ProposalBytes []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Proposal {
+  Header []byte
+  Payload []byte
+  Extension []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeHeaderExtension {
+  PayloadVisibility []byte
+  ChaincodeId *ChaincodeID
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeProposalPayload {
+  Input []byte
+  TransientMap map[string][]byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeAction {
+  Results []byte
+  Events []byte
+  Response *Response
+  ChaincodeId *ChaincodeID
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ProposalResponse {
+  Version int32
+  Timestamp *google_protobuf1.Timestamp
+  Response *Response
+  Payload []byte
+  Endorsement *Endorsement
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Response {
+  Status int32
+  Message string
+  Payload []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ProposalResponsePayload {
+  ProposalHash []byte
+  Extension []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Endorsement {
+  Endorser []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeQueryResponse {
+  Chaincodes []*ChaincodeInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeInfo {
+  Name string
+  Version string
+  Path string
+  Input string
+  Escc string
+  Vscc string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChannelQueryResponse {
+  Channels []*ChannelInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChannelInfo {
+  ChannelId string
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class SignedChaincodeDeploymentSpec {
+  ChaincodeDeploymentSpec []byte
+  InstantiationPolicy []byte
+  OwnerEndorsements []*Endorsement
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class SignedTransaction {
+  TransactionBytes []byte
+  Signature []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ProcessedTransaction {
+  TransactionEnvelope *common.Envelope
+  ValidationCode int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class Transaction {
+  Actions []*TransactionAction
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class TransactionAction {
+  Header []byte
+  Payload []byte
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeActionPayload {
+  ChaincodeProposalPayload []byte
+  Action *ChaincodeEndorsedAction
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ class ChaincodeEndorsedAction {
+  ProposalResponsePayload []byte
+  Endorsements []*Endorsement
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ interface DynamicConfigGroupFactory  {
+  DynamicConfigGroup(cg *ConfigGroup)proto.Message
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ interface isSignaturePolicy_Type  {
+  isSignaturePolicy_Type()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\common {
+ interface Signable  {
+  AsSignedData()([]*SignedData,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ interface ReceivedMessage  {
+  Respond(msg *GossipMessage)
+  GetGossipMessage()*SignedGossipMessage
+  GetSourceEnvelope()*Envelope
+  GetConnectionInfo()*ConnectionInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ interface isSecret_Content  {
+  isSecret_Content()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ interface isGossipMessage_Content  {
+  isGossipMessage_Content()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ interface GossipClient  {
+  GossipStream(ctx context.Context,opts ... grpc.CallOption)(Gossip_GossipStreamClient,error)
+  Ping(ctx context.Context,in *Empty,opts ... grpc.CallOption)(*Empty,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ interface Gossip_GossipStreamClient  {
+  Send(*Envelope)error
+  Recv()(*Envelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ interface GossipServer  {
+  GossipStream(Gossip_GossipStreamServer)error
+  Ping(context.Context,*Empty)(*Empty,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\gossip {
+ interface Gossip_GossipStreamServer  {
+  Send(*Envelope)error
+  Recv()(*Envelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset {
+ interface isRangeQueryInfo_ReadsInfo  {
+  isRangeQueryInfo_ReadsInfo()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface isSeekPosition_Type  {
+  isSeekPosition_Type()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface isDeliverResponse_Type  {
+  isDeliverResponse_Type()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface AtomicBroadcastClient  {
+  Broadcast(ctx context.Context,opts ... grpc.CallOption)(AtomicBroadcast_BroadcastClient,error)
+  Deliver(ctx context.Context,opts ... grpc.CallOption)(AtomicBroadcast_DeliverClient,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface AtomicBroadcast_BroadcastClient  {
+  Send(*common.Envelope)error
+  Recv()(*BroadcastResponse,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface AtomicBroadcast_DeliverClient  {
+  Send(*common.Envelope)error
+  Recv()(*DeliverResponse,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface AtomicBroadcastServer  {
+  Broadcast(AtomicBroadcast_BroadcastServer)error
+  Deliver(AtomicBroadcast_DeliverServer)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface AtomicBroadcast_BroadcastServer  {
+  Send(*BroadcastResponse)error
+  Recv()(*common.Envelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface AtomicBroadcast_DeliverServer  {
+  Send(*DeliverResponse)error
+  Recv()(*common.Envelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\orderer {
+ interface isKafkaMessage_Type  {
+  isKafkaMessage_Type()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface AdminClient  {
+  GetStatus(ctx context.Context,in *google_protobuf.Empty,opts ... grpc.CallOption)(*ServerStatus,error)
+  StartServer(ctx context.Context,in *google_protobuf.Empty,opts ... grpc.CallOption)(*ServerStatus,error)
+  GetModuleLogLevel(ctx context.Context,in *LogLevelRequest,opts ... grpc.CallOption)(*LogLevelResponse,error)
+  SetModuleLogLevel(ctx context.Context,in *LogLevelRequest,opts ... grpc.CallOption)(*LogLevelResponse,error)
+  RevertLogLevels(ctx context.Context,in *google_protobuf.Empty,opts ... grpc.CallOption)(*google_protobuf.Empty,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface AdminServer  {
+  GetStatus(context.Context,*google_protobuf.Empty)(*ServerStatus,error)
+  StartServer(context.Context,*google_protobuf.Empty)(*ServerStatus,error)
+  GetModuleLogLevel(context.Context,*LogLevelRequest)(*LogLevelResponse,error)
+  SetModuleLogLevel(context.Context,*LogLevelRequest)(*LogLevelResponse,error)
+  RevertLogLevels(context.Context,*google_protobuf.Empty)(*google_protobuf.Empty,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface ChaincodeSupportClient  {
+  Register(ctx context.Context,opts ... grpc.CallOption)(ChaincodeSupport_RegisterClient,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface ChaincodeSupport_RegisterClient  {
+  Send(*ChaincodeMessage)error
+  Recv()(*ChaincodeMessage,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface ChaincodeSupportServer  {
+  Register(ChaincodeSupport_RegisterServer)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface ChaincodeSupport_RegisterServer  {
+  Send(*ChaincodeMessage)error
+  Recv()(*ChaincodeMessage,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface isInterest_RegInfo  {
+  isInterest_RegInfo()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface isEvent_Event  {
+  isEvent_Event()
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface EventsClient  {
+  Chat(ctx context.Context,opts ... grpc.CallOption)(Events_ChatClient,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface Events_ChatClient  {
+  Send(*SignedEvent)error
+  Recv()(*Event,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface EventsServer  {
+  Chat(Events_ChatServer)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface Events_ChatServer  {
+  Send(*Event)error
+  Recv()(*SignedEvent,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface EndorserClient  {
+  ProcessProposal(ctx context.Context,in *SignedProposal,opts ... grpc.CallOption)(*ProposalResponse,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\protos\\peer {
+ interface EndorserServer  {
+  ProcessProposal(context.Context,*SignedProposal)(*ProposalResponse,error)
+}
+}
+github.com\\hyperledger\\fabric\\protos\\common.Metadata ---> "*" github.com\\hyperledger\\fabric\\protos\\common.MetadataSignature : Signatures
+github.com\\hyperledger\\fabric\\protos\\common.Payload ---> github.com\\hyperledger\\fabric\\protos\\common.Header : Header
+github.com\\hyperledger\\fabric\\protos\\common.Block ---> github.com\\hyperledger\\fabric\\protos\\common.BlockHeader : Header
+github.com\\hyperledger\\fabric\\protos\\common.Block ---> github.com\\hyperledger\\fabric\\protos\\common.BlockData : Data
+github.com\\hyperledger\\fabric\\protos\\common.Block ---> github.com\\hyperledger\\fabric\\protos\\common.BlockMetadata : Metadata
+github.com\\hyperledger\\fabric\\protos\\common.ConfigEnvelope ---> github.com\\hyperledger\\fabric\\protos\\common.Config : Config
+github.com\\hyperledger\\fabric\\protos\\common.ConfigEnvelope ---> github.com\\hyperledger\\fabric\\protos\\common.Envelope : LastUpdate
+github.com\\hyperledger\\fabric\\protos\\common.ConfigGroupSchema ---> "*" github.com\\hyperledger\\fabric\\protos\\common.ConfigGroupSchema : Groups
+github.com\\hyperledger\\fabric\\protos\\common.ConfigGroupSchema ---> "*" github.com\\hyperledger\\fabric\\protos\\common.ConfigValueSchema : Values
+github.com\\hyperledger\\fabric\\protos\\common.ConfigGroupSchema ---> "*" github.com\\hyperledger\\fabric\\protos\\common.ConfigPolicySchema : Policies
+github.com\\hyperledger\\fabric\\protos\\common.Config ---> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup : ChannelGroup
+github.com\\hyperledger\\fabric\\protos\\common.ConfigUpdateEnvelope ---> "*" github.com\\hyperledger\\fabric\\protos\\common.ConfigSignature : Signatures
+github.com\\hyperledger\\fabric\\protos\\common.ConfigUpdate ---> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup : ReadSet
+github.com\\hyperledger\\fabric\\protos\\common.ConfigUpdate ---> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup : WriteSet
+github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup ---> "*" github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup : Groups
+github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup ---> "*" github.com\\hyperledger\\fabric\\protos\\common.ConfigValue : Values
+github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup ---> "*" github.com\\hyperledger\\fabric\\protos\\common.ConfigPolicy : Policies
+github.com\\hyperledger\\fabric\\protos\\common.ConfigPolicy ---> github.com\\hyperledger\\fabric\\protos\\common.Policy : Policy
+github.com\\hyperledger\\fabric\\protos\\common.DynamicChannelGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\common.DynamicChannelConfigValue -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigValue
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConsortiumsGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConsortiumGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConsortiumConfigValue -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigValue
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConsortiumOrgGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConsortiumOrgConfigValue -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigValue
+github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicyEnvelope ---> github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicy : Rule
+github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicyEnvelope ---> "*" github.com\\hyperledger\\fabric\\protos\\msp.MSPPrincipal : Identities
+github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicy_NOutOf_ ---> github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicy_NOutOf : NOutOf
+github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicy_NOutOf ---> "*" github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicy : Rules
+github.com\\hyperledger\\fabric\\protos\\gossip.ConnectionInfo ---> github.com\\hyperledger\\fabric\\protos\\gossip.AuthInfo : Auth
+github.com\\hyperledger\\fabric\\protos\\gossip.SignedGossipMessage -|> github.com\\hyperledger\\fabric\\protos\\gossip.Envelope
+github.com\\hyperledger\\fabric\\protos\\gossip.SignedGossipMessage -|> github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage
+github.com\\hyperledger\\fabric\\protos\\gossip.Envelope ---> github.com\\hyperledger\\fabric\\protos\\gossip.SecretEnvelope : SecretEnvelope
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_AliveMsg ---> github.com\\hyperledger\\fabric\\protos\\gossip.AliveMessage : AliveMsg
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_MemReq ---> github.com\\hyperledger\\fabric\\protos\\gossip.MembershipRequest : MemReq
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_MemRes ---> github.com\\hyperledger\\fabric\\protos\\gossip.MembershipResponse : MemRes
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataMsg ---> github.com\\hyperledger\\fabric\\protos\\gossip.DataMessage : DataMsg
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_Hello ---> github.com\\hyperledger\\fabric\\protos\\gossip.GossipHello : Hello
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataDig ---> github.com\\hyperledger\\fabric\\protos\\gossip.DataDigest : DataDig
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataReq ---> github.com\\hyperledger\\fabric\\protos\\gossip.DataRequest : DataReq
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataUpdate ---> github.com\\hyperledger\\fabric\\protos\\gossip.DataUpdate : DataUpdate
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_Empty ---> github.com\\hyperledger\\fabric\\protos\\gossip.Empty : Empty
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_Conn ---> github.com\\hyperledger\\fabric\\protos\\gossip.ConnEstablish : Conn
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateInfo ---> github.com\\hyperledger\\fabric\\protos\\gossip.StateInfo : StateInfo
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateSnapshot ---> github.com\\hyperledger\\fabric\\protos\\gossip.StateInfoSnapshot : StateSnapshot
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateInfoPullReq ---> github.com\\hyperledger\\fabric\\protos\\gossip.StateInfoPullRequest : StateInfoPullReq
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateRequest ---> github.com\\hyperledger\\fabric\\protos\\gossip.RemoteStateRequest : StateRequest
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateResponse ---> github.com\\hyperledger\\fabric\\protos\\gossip.RemoteStateResponse : StateResponse
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_LeadershipMsg ---> github.com\\hyperledger\\fabric\\protos\\gossip.LeadershipMessage : LeadershipMsg
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_PeerIdentity ---> github.com\\hyperledger\\fabric\\protos\\gossip.PeerIdentity : PeerIdentity
+github.com\\hyperledger\\fabric\\protos\\gossip.StateInfo ---> github.com\\hyperledger\\fabric\\protos\\gossip.PeerTime : Timestamp
+github.com\\hyperledger\\fabric\\protos\\gossip.StateInfoSnapshot ---> "*" github.com\\hyperledger\\fabric\\protos\\gossip.Envelope : Elements
+github.com\\hyperledger\\fabric\\protos\\gossip.DataUpdate ---> "*" github.com\\hyperledger\\fabric\\protos\\gossip.Envelope : Data
+github.com\\hyperledger\\fabric\\protos\\gossip.DataMessage ---> github.com\\hyperledger\\fabric\\protos\\gossip.Payload : Payload
+github.com\\hyperledger\\fabric\\protos\\gossip.AliveMessage ---> github.com\\hyperledger\\fabric\\protos\\gossip.Member : Membership
+github.com\\hyperledger\\fabric\\protos\\gossip.AliveMessage ---> github.com\\hyperledger\\fabric\\protos\\gossip.PeerTime : Timestamp
+github.com\\hyperledger\\fabric\\protos\\gossip.LeadershipMessage ---> github.com\\hyperledger\\fabric\\protos\\gossip.PeerTime : Timestamp
+github.com\\hyperledger\\fabric\\protos\\gossip.MembershipRequest ---> github.com\\hyperledger\\fabric\\protos\\gossip.Envelope : SelfInformation
+github.com\\hyperledger\\fabric\\protos\\gossip.MembershipResponse ---> "*" github.com\\hyperledger\\fabric\\protos\\gossip.Envelope : Alive
+github.com\\hyperledger\\fabric\\protos\\gossip.MembershipResponse ---> "*" github.com\\hyperledger\\fabric\\protos\\gossip.Envelope : Dead
+github.com\\hyperledger\\fabric\\protos\\gossip.RemoteStateResponse ---> "*" github.com\\hyperledger\\fabric\\protos\\gossip.Payload : Payloads
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.KVRWSet ---> "*" github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.KVRead : Reads
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.KVRWSet ---> "*" github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.RangeQueryInfo : RangeQueriesInfo
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.KVRWSet ---> "*" github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.KVWrite : Writes
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.KVRead ---> github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.Version : Version
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.RangeQueryInfo_RawReads ---> github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.QueryReads : RawReads
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.RangeQueryInfo_ReadsMerkleHashes ---> github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.QueryReadsMerkleSummary : ReadsMerkleHashes
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.QueryReads ---> "*" github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.KVRead : KvReads
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset.TxReadWriteSet ---> "*" github.com\\hyperledger\\fabric\\protos\\ledger\\rwset.NsReadWriteSet : NsRwset
+github.com\\hyperledger\\fabric\\protos\\msp.FabricMSPConfig ---> github.com\\hyperledger\\fabric\\protos\\msp.SigningIdentityInfo : SigningIdentity
+github.com\\hyperledger\\fabric\\protos\\msp.FabricMSPConfig ---> "*" github.com\\hyperledger\\fabric\\protos\\msp.FabricOUIdentifier : OrganizationalUnitIdentifiers
+github.com\\hyperledger\\fabric\\protos\\msp.FabricMSPConfig ---> github.com\\hyperledger\\fabric\\protos\\msp.FabricCryptoConfig : CryptoConfig
+github.com\\hyperledger\\fabric\\protos\\msp.SigningIdentityInfo ---> github.com\\hyperledger\\fabric\\protos\\msp.KeyInfo : PrivateSigner
+github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition_Newest ---> github.com\\hyperledger\\fabric\\protos\\orderer.SeekNewest : Newest
+github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition_Oldest ---> github.com\\hyperledger\\fabric\\protos\\orderer.SeekOldest : Oldest
+github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition_Specified ---> github.com\\hyperledger\\fabric\\protos\\orderer.SeekSpecified : Specified
+github.com\\hyperledger\\fabric\\protos\\orderer.SeekInfo ---> github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition : Start
+github.com\\hyperledger\\fabric\\protos\\orderer.SeekInfo ---> github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition : Stop
+github.com\\hyperledger\\fabric\\protos\\orderer.DeliverResponse_Block ---> github.com\\hyperledger\\fabric\\protos\\common.Block : Block
+github.com\\hyperledger\\fabric\\protos\\orderer.DynamicOrdererGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\orderer.DynamicOrdererOrgGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\orderer.DynamicOrdererConfigValue -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigValue
+github.com\\hyperledger\\fabric\\protos\\orderer.DynamicOrdererOrgConfigValue -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigValue
+github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessage_Regular ---> github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessageRegular : Regular
+github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessage_TimeToCut ---> github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessageTimeToCut : TimeToCut
+github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessage_Connect ---> github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessageConnect : Connect
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSpec ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeID : ChaincodeId
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSpec ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeInput : Input
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeDeploymentSpec ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSpec : ChaincodeSpec
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeInvocationSpec ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSpec : ChaincodeSpec
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeMessage ---> github.com\\hyperledger\\fabric\\protos\\peer.SignedProposal : Proposal
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeMessage ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeEvent : ChaincodeEvent
+github.com\\hyperledger\\fabric\\protos\\peer.QueryResponse ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.QueryResultBytes : Results
+github.com\\hyperledger\\fabric\\protos\\peer.DynamicApplicationGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\peer.DynamicApplicationOrgGroup -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigGroup
+github.com\\hyperledger\\fabric\\protos\\peer.DynamicApplicationConfigValue -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigValue
+github.com\\hyperledger\\fabric\\protos\\peer.DynamicApplicationOrgConfigValue -|> github.com\\hyperledger\\fabric\\protos\\common.ConfigValue
+github.com\\hyperledger\\fabric\\protos\\peer.AnchorPeers ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.AnchorPeer : AnchorPeers
+github.com\\hyperledger\\fabric\\protos\\peer.Interest_ChaincodeRegInfo ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeReg : ChaincodeRegInfo
+github.com\\hyperledger\\fabric\\protos\\peer.Register ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.Interest : Events
+github.com\\hyperledger\\fabric\\protos\\peer.Rejection ---> github.com\\hyperledger\\fabric\\protos\\peer.Transaction : Tx
+github.com\\hyperledger\\fabric\\protos\\peer.Unregister ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.Interest : Events
+github.com\\hyperledger\\fabric\\protos\\peer.Event_Register ---> github.com\\hyperledger\\fabric\\protos\\peer.Register : Register
+github.com\\hyperledger\\fabric\\protos\\peer.Event_Block ---> github.com\\hyperledger\\fabric\\protos\\common.Block : Block
+github.com\\hyperledger\\fabric\\protos\\peer.Event_ChaincodeEvent ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeEvent : ChaincodeEvent
+github.com\\hyperledger\\fabric\\protos\\peer.Event_Rejection ---> github.com\\hyperledger\\fabric\\protos\\peer.Rejection : Rejection
+github.com\\hyperledger\\fabric\\protos\\peer.Event_Unregister ---> github.com\\hyperledger\\fabric\\protos\\peer.Unregister : Unregister
+github.com\\hyperledger\\fabric\\protos\\peer.PeerEndpoint ---> github.com\\hyperledger\\fabric\\protos\\peer.PeerID : Id
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeHeaderExtension ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeID : ChaincodeId
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeAction ---> github.com\\hyperledger\\fabric\\protos\\peer.Response : Response
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeAction ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeID : ChaincodeId
+github.com\\hyperledger\\fabric\\protos\\peer.ProposalResponse ---> github.com\\hyperledger\\fabric\\protos\\peer.Response : Response
+github.com\\hyperledger\\fabric\\protos\\peer.ProposalResponse ---> github.com\\hyperledger\\fabric\\protos\\peer.Endorsement : Endorsement
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeQueryResponse ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeInfo : Chaincodes
+github.com\\hyperledger\\fabric\\protos\\peer.ChannelQueryResponse ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.ChannelInfo : Channels
+github.com\\hyperledger\\fabric\\protos\\peer.SignedChaincodeDeploymentSpec ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.Endorsement : OwnerEndorsements
+github.com\\hyperledger\\fabric\\protos\\peer.ProcessedTransaction ---> github.com\\hyperledger\\fabric\\protos\\common.Envelope : TransactionEnvelope
+github.com\\hyperledger\\fabric\\protos\\peer.Transaction ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.TransactionAction : Actions
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeActionPayload ---> github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeEndorsedAction : Action
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeEndorsedAction ---> "*" github.com\\hyperledger\\fabric\\protos\\peer.Endorsement : Endorsements
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConfigGroupFactory <|- github.com\\hyperledger\\fabric\\protos\\common.DynamicConsortiumsGroupFactory
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConfigGroupFactory <|- github.com\\hyperledger\\fabric\\protos\\orderer.DynamicOrdererGroupFactory
+github.com\\hyperledger\\fabric\\protos\\common.DynamicConfigGroupFactory <|- github.com\\hyperledger\\fabric\\protos\\peer.DynamicApplicationGroupFactory
+github.com\\hyperledger\\fabric\\protos\\common.isSignaturePolicy_Type <|- github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicy_SignedBy
+github.com\\hyperledger\\fabric\\protos\\common.isSignaturePolicy_Type <|- github.com\\hyperledger\\fabric\\protos\\common.SignaturePolicy_NOutOf_
+github.com\\hyperledger\\fabric\\protos\\common.Signable <|- github.com\\hyperledger\\fabric\\protos\\common.Envelope
+github.com\\hyperledger\\fabric\\protos\\common.Signable <|- github.com\\hyperledger\\fabric\\protos\\common.ConfigUpdateEnvelope
+github.com\\hyperledger\\fabric\\protos\\gossip.isSecret_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.Secret_InternalEndpoint
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_AliveMsg
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_MemReq
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_MemRes
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataMsg
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_Hello
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataDig
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataReq
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_DataUpdate
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_Empty
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_Conn
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateInfo
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateSnapshot
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateInfoPullReq
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateRequest
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_StateResponse
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_LeadershipMsg
+github.com\\hyperledger\\fabric\\protos\\gossip.isGossipMessage_Content <|- github.com\\hyperledger\\fabric\\protos\\gossip.GossipMessage_PeerIdentity
+github.com\\hyperledger\\fabric\\protos\\gossip.GossipClient <|- github.com\\hyperledger\\fabric\\protos\\gossip.gossipClient
+github.com\\hyperledger\\fabric\\protos\\gossip.Gossip_GossipStreamClient <|- github.com\\hyperledger\\fabric\\protos\\gossip.gossipGossipStreamClient
+github.com\\hyperledger\\fabric\\protos\\gossip.Gossip_GossipStreamClient <|- github.com\\hyperledger\\fabric\\protos\\gossip.gossipGossipStreamServer
+github.com\\hyperledger\\fabric\\protos\\gossip.Gossip_GossipStreamServer <|- github.com\\hyperledger\\fabric\\protos\\gossip.gossipGossipStreamClient
+github.com\\hyperledger\\fabric\\protos\\gossip.Gossip_GossipStreamServer <|- github.com\\hyperledger\\fabric\\protos\\gossip.gossipGossipStreamServer
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.isRangeQueryInfo_ReadsInfo <|- github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.RangeQueryInfo_RawReads
+github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.isRangeQueryInfo_ReadsInfo <|- github.com\\hyperledger\\fabric\\protos\\ledger\\rwset\\kvrwset.RangeQueryInfo_ReadsMerkleHashes
+github.com\\hyperledger\\fabric\\protos\\orderer.isSeekPosition_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition_Newest
+github.com\\hyperledger\\fabric\\protos\\orderer.isSeekPosition_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition_Oldest
+github.com\\hyperledger\\fabric\\protos\\orderer.isSeekPosition_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.SeekPosition_Specified
+github.com\\hyperledger\\fabric\\protos\\orderer.isDeliverResponse_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.DeliverResponse_Status
+github.com\\hyperledger\\fabric\\protos\\orderer.isDeliverResponse_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.DeliverResponse_Block
+github.com\\hyperledger\\fabric\\protos\\orderer.AtomicBroadcastClient <|- github.com\\hyperledger\\fabric\\protos\\orderer.atomicBroadcastClient
+github.com\\hyperledger\\fabric\\protos\\orderer.AtomicBroadcast_BroadcastClient <|- github.com\\hyperledger\\fabric\\protos\\orderer.atomicBroadcastBroadcastClient
+github.com\\hyperledger\\fabric\\protos\\orderer.AtomicBroadcast_DeliverClient <|- github.com\\hyperledger\\fabric\\protos\\orderer.atomicBroadcastDeliverClient
+github.com\\hyperledger\\fabric\\protos\\orderer.AtomicBroadcast_BroadcastServer <|- github.com\\hyperledger\\fabric\\protos\\orderer.atomicBroadcastBroadcastServer
+github.com\\hyperledger\\fabric\\protos\\orderer.AtomicBroadcast_DeliverServer <|- github.com\\hyperledger\\fabric\\protos\\orderer.atomicBroadcastDeliverServer
+github.com\\hyperledger\\fabric\\protos\\orderer.isKafkaMessage_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessage_Regular
+github.com\\hyperledger\\fabric\\protos\\orderer.isKafkaMessage_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessage_TimeToCut
+github.com\\hyperledger\\fabric\\protos\\orderer.isKafkaMessage_Type <|- github.com\\hyperledger\\fabric\\protos\\orderer.KafkaMessage_Connect
+github.com\\hyperledger\\fabric\\protos\\peer.AdminClient <|- github.com\\hyperledger\\fabric\\protos\\peer.adminClient
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSupportClient <|- github.com\\hyperledger\\fabric\\protos\\peer.chaincodeSupportClient
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSupport_RegisterClient <|- github.com\\hyperledger\\fabric\\protos\\peer.chaincodeSupportRegisterClient
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSupport_RegisterClient <|- github.com\\hyperledger\\fabric\\protos\\peer.chaincodeSupportRegisterServer
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSupport_RegisterServer <|- github.com\\hyperledger\\fabric\\protos\\peer.chaincodeSupportRegisterClient
+github.com\\hyperledger\\fabric\\protos\\peer.ChaincodeSupport_RegisterServer <|- github.com\\hyperledger\\fabric\\protos\\peer.chaincodeSupportRegisterServer
+github.com\\hyperledger\\fabric\\protos\\peer.isInterest_RegInfo <|- github.com\\hyperledger\\fabric\\protos\\peer.Interest_ChaincodeRegInfo
+github.com\\hyperledger\\fabric\\protos\\peer.isEvent_Event <|- github.com\\hyperledger\\fabric\\protos\\peer.Event_Register
+github.com\\hyperledger\\fabric\\protos\\peer.isEvent_Event <|- github.com\\hyperledger\\fabric\\protos\\peer.Event_Block
+github.com\\hyperledger\\fabric\\protos\\peer.isEvent_Event <|- github.com\\hyperledger\\fabric\\protos\\peer.Event_ChaincodeEvent
+github.com\\hyperledger\\fabric\\protos\\peer.isEvent_Event <|- github.com\\hyperledger\\fabric\\protos\\peer.Event_Rejection
+github.com\\hyperledger\\fabric\\protos\\peer.isEvent_Event <|- github.com\\hyperledger\\fabric\\protos\\peer.Event_Unregister
+github.com\\hyperledger\\fabric\\protos\\peer.EventsClient <|- github.com\\hyperledger\\fabric\\protos\\peer.eventsClient
+github.com\\hyperledger\\fabric\\protos\\peer.Events_ChatClient <|- github.com\\hyperledger\\fabric\\protos\\peer.eventsChatClient
+github.com\\hyperledger\\fabric\\protos\\peer.Events_ChatServer <|- github.com\\hyperledger\\fabric\\protos\\peer.eventsChatServer
+github.com\\hyperledger\\fabric\\protos\\peer.EndorserClient <|- github.com\\hyperledger\\fabric\\protos\\peer.endorserClient
+@enduml

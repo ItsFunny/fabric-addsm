@@ -1,0 +1,899 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\gossip\\api {
+ class AnchorPeer {
+  Host string
+  Port int
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class RemotePeer {
+  Endpoint string
+  PKIID common.PKIidType
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class commImpl {
+  selfCertHash []byte
+  peerIdentity api.PeerIdentityType
+  idMapper identity.Mapper
+  logger *logging.Logger
+  opts []grpc.DialOption
+  secureDialOpts func()[]grpc.DialOption
+  connStore *connectionStore
+  PKIID []byte
+  deadEndpoints chan common.PKIidType
+  msgPublisher *ChannelDeMultiplexer
+  lock *sync.RWMutex
+  lsnr net.Listener
+  gSrv *grpc.Server
+  exitChan chan struct { }
+  stopWG sync.WaitGroup
+  subscriptions []chan proto.ReceivedMessage
+  port int
+  stopping int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class connectionStore {
+  logger *logging.Logger
+  isClosing bool
+  connFactory connFactory
+  sync.RWMutex
+  pki2Conn map[string]*connection
+  destinationLocks map[string]*sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class connection {
+  cancel context.CancelFunc
+  info *proto.ConnectionInfo
+  outBuff chan *msgSending
+  logger *logging.Logger
+  pkiID common.PKIidType
+  handler handler
+  conn *grpc.ClientConn
+  cl proto.GossipClient
+  clientStream proto.Gossip_GossipStreamClient
+  serverStream proto.Gossip_GossipStreamServer
+  stopFlag int32
+  stopChan chan struct { }
+  sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class msgSending {
+  envelope *proto.Envelope
+  onErr func(error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class ChannelDeMultiplexer {
+  channels []*channel
+  lock *sync.RWMutex
+  closed int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class channel {
+  pred common.MessageAcceptor
+  ch chan interface  { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm\\mock {
+ class socketMock {
+  endpoint string
+  socket chan interface  { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm\\mock {
+ class packetMock {
+  src *socketMock
+  dst *socketMock
+  msg interface  { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm\\mock {
+ class channelMock {
+  accept common.MessageAcceptor
+  channel chan proto.ReceivedMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm\\mock {
+ class commMock {
+  id string
+  members map[string]*socketMock
+  acceptors []*channelMock
+  deadChannel chan common.PKIidType
+  done chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ class ReceivedMessageImpl {
+  *proto.SignedGossipMessage
+  lock sync.Locker
+  conn *connection
+  connInfo *proto.ConnectionInfo
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\common {
+ class Payload {
+  ChainID ChainID
+  Data []byte
+  Hash string
+  SeqNum uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ class NetworkMember {
+  Endpoint string
+  Metadata []byte
+  PKIid common.PKIidType
+  InternalEndpoint string
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ class PeerIdentification {
+  ID common.PKIidType
+  SelfOrg bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ class timestamp {
+  incTime time.Time
+  seqNum uint64
+  lastSeen time.Time
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ class gossipDiscoveryImpl {
+  incTime uint64
+  seqNum uint64
+  self NetworkMember
+  deadLastTS map[string]*timestamp
+  aliveLastTS map[string]*timestamp
+  id2Member map[string]*NetworkMember
+  aliveMembership *util.MembershipStore
+  deadMembership *util.MembershipStore
+  msgStore *aliveMsgStore
+  comm CommService
+  crypt CryptoService
+  lock *sync.RWMutex
+  toDieChan chan struct { }
+  toDieFlag int32
+  port int
+  logger *logging.Logger
+  disclosurePolicy DisclosurePolicy
+  pubsub *util.PubSub
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ class aliveMsgStore {
+  msgstore.MessageStore
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ class msgImpl {
+  msg *proto.GossipMessage
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ class peerImpl {
+  member discovery.NetworkMember
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ class adapterImpl {
+  gossip gossip
+  selfPKIid common.PKIidType
+  incTime uint64
+  seqNum uint64
+  channel common.ChainID
+  logger *logging.Logger
+  doneCh chan struct { }
+  stopOnce *sync.Once
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ class leaderElectionSvcImpl {
+  id peerID
+  proposals *util.Set
+  sync.Mutex
+  stopChan chan struct { }
+  interruptChan chan struct { }
+  stopWG sync.WaitGroup
+  isLeader int32
+  toDie int32
+  leaderExists int32
+  sleeping bool
+  adapter LeaderElectionAdapter
+  logger *logging.Logger
+  callback leadershipCallback
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\algo {
+ class PullEngine {
+  PullAdapter
+  stopFlag int32
+  state *util.Set
+  item2owners map[string][]string
+  peers2nonces map[string]uint64
+  nonces2peers map[uint64]string
+  acceptingDigests int32
+  acceptingResponses int32
+  lock sync.Mutex
+  outgoingNONCES *util.Set
+  incomingNONCES *util.Set
+  digFilter DigestFilter
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class batchingEmitterImpl {
+  iterations int
+  burstSize int
+  delay time.Duration
+  cb emitBatchCallback
+  lock *sync.Mutex
+  buff []*batchedMessage
+  stopFlag int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class batchedMessage {
+  data interface  { }
+  iterationsLeft int
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class certStore {
+  sync.RWMutex
+  selfIdentity api.PeerIdentityType
+  idMapper identity.Mapper
+  pull pull.Mediator
+  logger *logging.Logger
+  mcs api.MessageCryptoService
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\channel {
+ class Config {
+  ID string
+  PublishStateInfoInterval time.Duration
+  MaxBlockCountToStore int
+  PullPeerNum int
+  PullInterval time.Duration
+  RequestStateInfoInterval time.Duration
+  BlockExpirationInterval time.Duration
+  StateInfoCacheSweepInterval time.Duration
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\channel {
+ class gossipChannel {
+  Adapter
+  sync.RWMutex
+  shouldGossipStateInfo int32
+  mcs api.MessageCryptoService
+  pkiID common.PKIidType
+  selfOrg api.OrgIdentityType
+  stopChan chan struct { }
+  stateInfoMsg *proto.SignedGossipMessage
+  orgs []api.OrgIdentityType
+  joinMsg api.JoinChannelMessage
+  blockMsgStore msgstore.MessageStore
+  stateInfoMsgStore *stateInfoCache
+  leaderMsgStore msgstore.MessageStore
+  chainID common.ChainID
+  blocksPuller pull.Mediator
+  logger *logging.Logger
+  stateInfoPublishScheduler *time.Ticker
+  stateInfoRequestScheduler *time.Ticker
+  memFilter *membershipFilter
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\channel {
+ class membershipFilter {
+  adapter Adapter
+  *gossipChannel
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\channel {
+ class stateInfoCache {
+  *util.MembershipStore
+  msgstore.MessageStore
+  stopChan chan struct { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class channelState {
+  stopping int32
+  sync.RWMutex
+  channels map[string]channel.GossipChannel
+  g *gossipServiceImpl
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class gossipAdapterImpl {
+  *gossipServiceImpl
+  discovery.Discovery
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class Config {
+  BindPort int
+  ID string
+  BootstrapPeers []string
+  PropagateIterations int
+  PropagatePeerNum int
+  MaxBlockCountToStore int
+  MaxPropagationBurstSize int
+  MaxPropagationBurstLatency time.Duration
+  PullInterval time.Duration
+  PullPeerNum int
+  SkipBlockVerification bool
+  PublishCertPeriod time.Duration
+  PublishStateInfoInterval time.Duration
+  RequestStateInfoInterval time.Duration
+  TLSServerCert *tls.Certificate
+  InternalEndpoint string
+  ExternalEndpoint string
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class gossipServiceImpl {
+  selfIdentity api.PeerIdentityType
+  includeIdentityPeriod time.Time
+  certStore *certStore
+  idMapper identity.Mapper
+  presumedDead chan common.PKIidType
+  disc discovery.Discovery
+  comm comm.Comm
+  incTime time.Time
+  selfOrg api.OrgIdentityType
+  *comm.ChannelDeMultiplexer
+  logger *logging.Logger
+  stopSignal *sync.WaitGroup
+  conf *Config
+  toDieChan chan struct { }
+  stopFlag int32
+  emitter batchingEmitter
+  discAdapter *discoveryAdapter
+  secAdvisor api.SecurityAdvisor
+  chanState *channelState
+  disSecAdap *discoverySecurityAdapter
+  mcs api.MessageCryptoService
+  stateInfoMsgStore msgstore.MessageStore
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class discoveryAdapter {
+  stopping int32
+  c comm.Comm
+  presumedDead chan common.PKIidType
+  incChan chan *proto.SignedGossipMessage
+  gossipFunc func(message *proto.SignedGossipMessage)
+  disclosurePolicy discovery.DisclosurePolicy
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ class discoverySecurityAdapter {
+  identity api.PeerIdentityType
+  includeIdentityPeriod time.Time
+  idMapper identity.Mapper
+  sa api.SecurityAdvisor
+  mcs api.MessageCryptoService
+  c comm.Comm
+  logger *logging.Logger
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\msgstore {
+ class messageStoreImpl {
+  pol common.MessageReplacingPolicy
+  lock sync.RWMutex
+  messages []*msg
+  invTrigger invalidationTrigger
+  msgTTL time.Duration
+  expiredCount int
+  externalLock func()
+  externalUnlock func()
+  expireMsgCallback func(msg interface  { })
+  doneCh chan struct { }
+  stopOnce sync.Once
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\msgstore {
+ class msg {
+  data interface  { }
+  created time.Time
+  expired bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\pull {
+ class Config {
+  ID string
+  PullInterval time.Duration
+  Channel common.ChainID
+  PeerCountToSelect int
+  Tag proto.GossipMessage_Tag
+  MsgType proto.PullMsgType
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\pull {
+ class PullAdapter {
+  Sndr Sender
+  MemSvc MembershipService
+  IdExtractor proto.IdentifierExtractor
+  MsgCons proto.MsgConsumer
+  DigFilter DigestFilter
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\pull {
+ class pullMediatorImpl {
+  sync.RWMutex
+  *PullAdapter
+  msgType2Hook map[MsgType][]MessageHook
+  config Config
+  logger *logging.Logger
+  itemID2Msg map[string]*proto.SignedGossipMessage
+  engine *algo.PullEngine
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\identity {
+ class identityMapperImpl {
+  mcs api.MessageCryptoService
+  pkiID2Cert map[string]*storedIdentity
+  sync.RWMutex
+  selfPKIID string
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\identity {
+ class storedIdentity {
+  lastAccessTime int64
+  peerIdentity api.PeerIdentityType
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ class configStore {
+  anchorPeers []*peer.AnchorPeer
+  orgMap map[string]config.ApplicationOrg
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ class configEventer {
+  lastConfig *configStore
+  receiver configEventReceiver
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ class appGrp {
+  name string
+  mspID string
+  anchorPeers []*peer.AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ class deliveryFactoryImpl {
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ class gossipServiceImpl {
+  gossipSvc
+  chains map[string]state.GossipStateProvider
+  leaderElection map[string]election.LeaderElectionService
+  deliveryService deliverclient.DeliverService
+  deliveryFactory DeliveryServiceFactory
+  lock sync.RWMutex
+  idMapper identity.Mapper
+  mcs api.MessageCryptoService
+  peerIdentity []byte
+  secAdv api.SecurityAdvisor
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ class joinChannelMessage {
+  seqNum uint64
+  members2AnchorPeers map[string][]api.AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\state {
+ class NodeMetastate {
+  LedgerHeight uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\state\\mocks {
+ class GossipMock {
+  mock.Mock
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\state {
+ class PayloadsBufferImpl {
+  next uint64
+  buf map[uint64]*proto.Payload
+  readyChan chan struct { }
+  mutex sync.RWMutex
+  logger *logging.Logger
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\state {
+ class GossipStateProviderImpl {
+  mcs api.MessageCryptoService
+  chainID string
+  gossip GossipAdapter
+  gossipChan chan *proto.GossipMessage
+  commChan chan proto.ReceivedMessage
+  payloads PayloadsBuffer
+  committer committer.Committer
+  stateResponseCh chan proto.ReceivedMessage
+  stateRequestCh chan proto.ReceivedMessage
+  stopCh chan struct { }
+  done sync.WaitGroup
+  once sync.Once
+  stateTransferActive int32
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\util {
+ class Set {
+  items map[interface  { }]struct { }
+  lock *sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\util {
+ class MembershipStore {
+  m map[string]*proto.SignedGossipMessage
+  sync.RWMutex
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\util {
+ class PubSub {
+  sync.RWMutex
+  subscriptions map[string]*Set
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\util {
+ class subscription {
+  top string
+  ttl time.Duration
+  c chan interface  { }
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\api {
+ interface SecurityAdvisor  {
+  OrgByPeerIdentity(PeerIdentityType)OrgIdentityType
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\api {
+ interface ChannelNotifier  {
+  JoinChannel(joinMsg JoinChannelMessage,chainID common.ChainID)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\api {
+ interface JoinChannelMessage  {
+  SequenceNumber()uint64
+  Members()[]OrgIdentityType
+  AnchorPeersOf(org OrgIdentityType)[]AnchorPeer
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\api {
+ interface MessageCryptoService  {
+  GetPKIidOfCert(peerIdentity PeerIdentityType)common.PKIidType
+  VerifyBlock(chainID common.ChainID,seqNum uint64,signedBlock []byte)error
+  Sign(msg []byte)([]byte,error)
+  Verify(peerIdentity PeerIdentityType,signature,message []byte)error
+  VerifyByChannel(chainID common.ChainID,peerIdentity PeerIdentityType,signature,message []byte)error
+  ValidateIdentity(peerIdentity PeerIdentityType)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ interface Comm  {
+  GetPKIid()common.PKIidType
+  Send(msg *proto.SignedGossipMessage,peers ... *RemotePeer)
+  Probe(peer *RemotePeer)error
+  Handshake(peer *RemotePeer)(api.PeerIdentityType,error)
+  Accept(common.MessageAcceptor)chan proto.ReceivedMessage
+  PresumedDead()chan common.PKIidType
+  CloseConn(peer *RemotePeer)
+  Stop()
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ interface stream  {
+  Send(envelope *proto.Envelope)error
+  Recv()(*proto.Envelope,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\comm {
+ interface connFactory  {
+  createConnection(endpoint string,pkiID common.PKIidType)(*connection,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ interface CryptoService  {
+  ValidateAliveMsg(message *proto.SignedGossipMessage)bool
+  SignMessage(m *proto.GossipMessage,internalEndpoint string)*proto.Envelope
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ interface CommService  {
+  Gossip(msg *proto.SignedGossipMessage)
+  SendToPeer(peer *NetworkMember,msg *proto.SignedGossipMessage)
+  Ping(peer *NetworkMember)bool
+  Accept()chan *proto.SignedGossipMessage
+  PresumedDead()chan common.PKIidType
+  CloseConn(peer *NetworkMember)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\discovery {
+ interface Discovery  {
+  Lookup(PKIID common.PKIidType)*NetworkMember
+  Self()NetworkMember
+  UpdateMetadata([]byte)
+  UpdateEndpoint(string)
+  Stop()
+  GetMembership()[]NetworkMember
+  InitiateSync(peerNum int)
+  Connect(member NetworkMember,id identifier)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ interface gossip  {
+  Peers()[]discovery.NetworkMember
+  Accept(acceptor common.MessageAcceptor,passThrough bool)(chan *proto.GossipMessage,chan proto.ReceivedMessage)
+  Gossip(msg *proto.GossipMessage)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ interface LeaderElectionAdapter  {
+  Gossip(Msg)
+  Accept()chan Msg
+  CreateMessage(isDeclaration bool)Msg
+  Peers()[]Peer
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ interface LeaderElectionService  {
+  IsLeader()bool
+  Stop()
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ interface Peer  {
+  ID()peerID
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\election {
+ interface Msg  {
+  SenderID()peerID
+  IsProposal()bool
+  IsDeclaration()bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\algo {
+ interface PullAdapter  {
+  SelectPeers()[]string
+  Hello(dest string,nonce uint64)
+  SendDigest(digest []string,nonce uint64,context interface  { })
+  SendReq(dest string,items []string,nonce uint64)
+  SendRes(items []string,context interface  { },nonce uint64)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ interface batchingEmitter  {
+  Add(interface  { })
+  Stop()
+  Size()int
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\channel {
+ interface GossipChannel  {
+  GetPeers()[]discovery.NetworkMember
+  IsMemberInChan(member discovery.NetworkMember)bool
+  UpdateStateInfo(msg *proto.SignedGossipMessage)
+  IsOrgInChannel(membersOrg api.OrgIdentityType)bool
+  EligibleForChannel(member discovery.NetworkMember)bool
+  HandleMessage(proto.ReceivedMessage)
+  AddToMsgStore(msg *proto.SignedGossipMessage)
+  ConfigureChannel(joinMsg api.JoinChannelMessage)
+  Stop()
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\channel {
+ interface Adapter  {
+  GetConf()Config
+  Gossip(message *proto.SignedGossipMessage)
+  DeMultiplex(interface  { })
+  GetMembership()[]discovery.NetworkMember
+  Lookup(PKIID common.PKIidType)*discovery.NetworkMember
+  Send(msg *proto.SignedGossipMessage,peers ... *comm.RemotePeer)
+  ValidateStateInfoMessage(message *proto.SignedGossipMessage)error
+  GetOrgOfPeer(pkiID common.PKIidType)api.OrgIdentityType
+  GetIdentityByPKIID(pkiID common.PKIidType)api.PeerIdentityType
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip {
+ interface Gossip  {
+  Send(msg *proto.GossipMessage,peers ... *comm.RemotePeer)
+  Peers()[]discovery.NetworkMember
+  PeersOfChannel(common.ChainID)[]discovery.NetworkMember
+  UpdateMetadata(metadata []byte)
+  UpdateChannelMetadata(metadata []byte,chainID common.ChainID)
+  Gossip(msg *proto.GossipMessage)
+  Accept(acceptor common.MessageAcceptor,passThrough bool)(chan *proto.GossipMessage,chan proto.ReceivedMessage)
+  JoinChan(joinMsg api.JoinChannelMessage,chainID common.ChainID)
+  SuspectPeers(s api.PeerSuspector)
+  Stop()
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\msgstore {
+ interface MessageStore  {
+  Add(msg interface  { })bool
+  CheckValid(msg interface  { })bool
+  Size()int
+  Get()[]interface  { }
+  Stop()
+  Purge(func(interface  { })bool)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\pull {
+ interface Sender  {
+  Send(msg *proto.SignedGossipMessage,peers ... *comm.RemotePeer)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\pull {
+ interface MembershipService  {
+  GetMembership()[]discovery.NetworkMember
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\gossip\\pull {
+ interface Mediator  {
+  Stop()
+  RegisterMsgHook(MsgType,MessageHook)
+  Add(*proto.SignedGossipMessage)
+  Remove(digest string)
+  HandleMessage(msg proto.ReceivedMessage)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\identity {
+ interface Mapper  {
+  Put(pkiID common.PKIidType,identity api.PeerIdentityType)error
+  Get(pkiID common.PKIidType)(api.PeerIdentityType,error)
+  Sign(msg []byte)([]byte,error)
+  Verify(vkID,signature,message []byte)error
+  GetPKIidOfCert(api.PeerIdentityType)common.PKIidType
+  ListInvalidIdentities(isSuspected api.PeerSuspector)[]common.PKIidType
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ interface Config  {
+  ChainID()string
+  Organizations()map[string]config.ApplicationOrg
+  Sequence()uint64
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ interface ConfigProcessor  {
+  ProcessConfigUpdate(config Config)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ interface configEventReceiver  {
+  configUpdated(config Config)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ interface GossipService  {
+  NewConfigEventer()ConfigProcessor
+  InitializeChannel(chainID string,committer committer.Committer,endpoints []string)
+  GetBlock(chainID string,index uint64)*common.Block
+  AddPayload(chainID string,payload *proto.Payload)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\service {
+ interface DeliveryServiceFactory  {
+  Service(g GossipService,endpoints []string,msc api.MessageCryptoService)(deliverclient.DeliverService,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\state {
+ interface PayloadsBuffer  {
+  Push(payload *proto.Payload)error
+  Next()uint64
+  Pop()*proto.Payload
+  Size()int
+  Ready()chan struct { }
+  Close()
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\state {
+ interface GossipStateProvider  {
+  GetBlock(index uint64)*common.Block
+  AddPayload(payload *proto.Payload)error
+  Stop()
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\state {
+ interface GossipAdapter  {
+  Send(msg *proto.GossipMessage,peers ... *comm.RemotePeer)
+  Accept(acceptor common2.MessageAcceptor,passThrough bool)(chan *proto.GossipMessage,chan proto.ReceivedMessage)
+  UpdateChannelMetadata(metadata []byte,chainID common2.ChainID)
+  PeersOfChannel(common2.ChainID)[]discovery.NetworkMember
+}
+}
+namespace github.com\\hyperledger\\fabric\\gossip\\util {
+ interface Subscription  {
+  Listen()(interface  { },error)
+}
+}
+github.com\\hyperledger\\fabric\\gossip\\comm.commImpl ---> github.com\\hyperledger\\fabric\\gossip\\comm.connectionStore : connStore
+github.com\\hyperledger\\fabric\\gossip\\comm.commImpl ---> github.com\\hyperledger\\fabric\\gossip\\comm.ChannelDeMultiplexer : msgPublisher
+github.com\\hyperledger\\fabric\\gossip\\comm.connectionStore ---> "*" github.com\\hyperledger\\fabric\\gossip\\comm.connection : pki2Conn
+github.com\\hyperledger\\fabric\\gossip\\comm.ChannelDeMultiplexer ---> "*" github.com\\hyperledger\\fabric\\gossip\\comm.channel : channels
+github.com\\hyperledger\\fabric\\gossip\\comm\\mock.packetMock ---> github.com\\hyperledger\\fabric\\gossip\\comm\\mock.socketMock : src
+github.com\\hyperledger\\fabric\\gossip\\comm\\mock.packetMock ---> github.com\\hyperledger\\fabric\\gossip\\comm\\mock.socketMock : dst
+github.com\\hyperledger\\fabric\\gossip\\comm\\mock.commMock ---> "*" github.com\\hyperledger\\fabric\\gossip\\comm\\mock.socketMock : members
+github.com\\hyperledger\\fabric\\gossip\\comm\\mock.commMock ---> "*" github.com\\hyperledger\\fabric\\gossip\\comm\\mock.channelMock : acceptors
+github.com\\hyperledger\\fabric\\gossip\\comm.ReceivedMessageImpl ---> github.com\\hyperledger\\fabric\\gossip\\comm.connection : conn
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> github.com\\hyperledger\\fabric\\gossip\\discovery.NetworkMember : self
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> "*" github.com\\hyperledger\\fabric\\gossip\\discovery.timestamp : deadLastTS
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> "*" github.com\\hyperledger\\fabric\\gossip\\discovery.timestamp : aliveLastTS
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> "*" github.com\\hyperledger\\fabric\\gossip\\discovery.NetworkMember : id2Member
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> github.com\\hyperledger\\fabric\\gossip\\util.MembershipStore : aliveMembership
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> github.com\\hyperledger\\fabric\\gossip\\util.MembershipStore : deadMembership
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> github.com\\hyperledger\\fabric\\gossip\\discovery.aliveMsgStore : msgStore
+github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl ---> github.com\\hyperledger\\fabric\\gossip\\util.PubSub : pubsub
+github.com\\hyperledger\\fabric\\gossip\\election.peerImpl ---> github.com\\hyperledger\\fabric\\gossip\\discovery.NetworkMember : member
+github.com\\hyperledger\\fabric\\gossip\\election.leaderElectionSvcImpl ---> github.com\\hyperledger\\fabric\\gossip\\util.Set : proposals
+github.com\\hyperledger\\fabric\\gossip\\gossip\\algo.PullEngine ---> github.com\\hyperledger\\fabric\\gossip\\util.Set : state
+github.com\\hyperledger\\fabric\\gossip\\gossip\\algo.PullEngine ---> github.com\\hyperledger\\fabric\\gossip\\util.Set : outgoingNONCES
+github.com\\hyperledger\\fabric\\gossip\\gossip\\algo.PullEngine ---> github.com\\hyperledger\\fabric\\gossip\\util.Set : incomingNONCES
+github.com\\hyperledger\\fabric\\gossip\\gossip.batchingEmitterImpl ---> "*" github.com\\hyperledger\\fabric\\gossip\\gossip.batchedMessage : buff
+github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.gossipChannel ---> github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.stateInfoCache : stateInfoMsgStore
+github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.gossipChannel ---> github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.membershipFilter : memFilter
+github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.membershipFilter -|> github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.gossipChannel
+github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.stateInfoCache -|> github.com\\hyperledger\\fabric\\gossip\\util.MembershipStore
+github.com\\hyperledger\\fabric\\gossip\\gossip.channelState ---> github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl : g
+github.com\\hyperledger\\fabric\\gossip\\gossip.gossipAdapterImpl -|> github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl ---> github.com\\hyperledger\\fabric\\gossip\\gossip.certStore : certStore
+github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl -|> github.com\\hyperledger\\fabric\\gossip\\comm.ChannelDeMultiplexer
+github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl ---> github.com\\hyperledger\\fabric\\gossip\\gossip.Config : conf
+github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl ---> github.com\\hyperledger\\fabric\\gossip\\gossip.discoveryAdapter : discAdapter
+github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl ---> github.com\\hyperledger\\fabric\\gossip\\gossip.channelState : chanState
+github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl ---> github.com\\hyperledger\\fabric\\gossip\\gossip.discoverySecurityAdapter : disSecAdap
+github.com\\hyperledger\\fabric\\gossip\\gossip\\msgstore.messageStoreImpl ---> "*" github.com\\hyperledger\\fabric\\gossip\\gossip\\msgstore.msg : messages
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.pullMediatorImpl -|> github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.PullAdapter
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.pullMediatorImpl ---> github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.Config : config
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.pullMediatorImpl ---> github.com\\hyperledger\\fabric\\gossip\\gossip\\algo.PullEngine : engine
+github.com\\hyperledger\\fabric\\gossip\\identity.identityMapperImpl ---> "*" github.com\\hyperledger\\fabric\\gossip\\identity.storedIdentity : pkiID2Cert
+github.com\\hyperledger\\fabric\\gossip\\service.configEventer ---> github.com\\hyperledger\\fabric\\gossip\\service.configStore : lastConfig
+github.com\\hyperledger\\fabric\\gossip\\service.joinChannelMessage ---> "*" github.com\\hyperledger\\fabric\\gossip\\api.AnchorPeer : members2AnchorPeers
+github.com\\hyperledger\\fabric\\gossip\\util.PubSub ---> "*" github.com\\hyperledger\\fabric\\gossip\\util.Set : subscriptions
+github.com\\hyperledger\\fabric\\gossip\\comm.Comm <|- github.com\\hyperledger\\fabric\\gossip\\comm.commImpl
+github.com\\hyperledger\\fabric\\gossip\\comm.Comm <|- github.com\\hyperledger\\fabric\\gossip\\comm\\mock.commMock
+github.com\\hyperledger\\fabric\\gossip\\comm.connFactory <|- github.com\\hyperledger\\fabric\\gossip\\comm.commImpl
+github.com\\hyperledger\\fabric\\gossip\\discovery.CryptoService <|- github.com\\hyperledger\\fabric\\gossip\\gossip.discoverySecurityAdapter
+github.com\\hyperledger\\fabric\\gossip\\discovery.CommService <|- github.com\\hyperledger\\fabric\\gossip\\gossip.discoveryAdapter
+github.com\\hyperledger\\fabric\\gossip\\discovery.Discovery <|- github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl
+github.com\\hyperledger\\fabric\\gossip\\election.gossip <|- github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl
+github.com\\hyperledger\\fabric\\gossip\\election.gossip <|- github.com\\hyperledger\\fabric\\gossip\\state\\mocks.GossipMock
+github.com\\hyperledger\\fabric\\gossip\\election.LeaderElectionAdapter <|- github.com\\hyperledger\\fabric\\gossip\\election.adapterImpl
+github.com\\hyperledger\\fabric\\gossip\\election.LeaderElectionService <|- github.com\\hyperledger\\fabric\\gossip\\election.leaderElectionSvcImpl
+github.com\\hyperledger\\fabric\\gossip\\election.Peer <|- github.com\\hyperledger\\fabric\\gossip\\election.peerImpl
+github.com\\hyperledger\\fabric\\gossip\\election.Msg <|- github.com\\hyperledger\\fabric\\gossip\\election.msgImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip\\algo.PullAdapter <|- github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.pullMediatorImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip.batchingEmitter <|- github.com\\hyperledger\\fabric\\gossip\\gossip.batchingEmitterImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.GossipChannel <|- github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.gossipChannel
+github.com\\hyperledger\\fabric\\gossip\\gossip.Gossip <|- github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip.Gossip <|- github.com\\hyperledger\\fabric\\gossip\\state\\mocks.GossipMock
+github.com\\hyperledger\\fabric\\gossip\\gossip\\msgstore.MessageStore <|- github.com\\hyperledger\\fabric\\gossip\\gossip\\msgstore.messageStoreImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.Sender <|- github.com\\hyperledger\\fabric\\gossip\\comm.commImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.Sender <|- github.com\\hyperledger\\fabric\\gossip\\comm\\mock.commMock
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.Sender <|- github.com\\hyperledger\\fabric\\gossip\\gossip.gossipAdapterImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.MembershipService <|- github.com\\hyperledger\\fabric\\gossip\\discovery.gossipDiscoveryImpl
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.MembershipService <|- github.com\\hyperledger\\fabric\\gossip\\gossip\\channel.membershipFilter
+github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.Mediator <|- github.com\\hyperledger\\fabric\\gossip\\gossip\\pull.pullMediatorImpl
+github.com\\hyperledger\\fabric\\gossip\\identity.Mapper <|- github.com\\hyperledger\\fabric\\gossip\\identity.identityMapperImpl
+github.com\\hyperledger\\fabric\\gossip\\service.ConfigProcessor <|- github.com\\hyperledger\\fabric\\gossip\\service.configEventer
+github.com\\hyperledger\\fabric\\gossip\\service.configEventReceiver <|- github.com\\hyperledger\\fabric\\gossip\\service.gossipServiceImpl
+github.com\\hyperledger\\fabric\\gossip\\service.GossipService <|- github.com\\hyperledger\\fabric\\gossip\\service.gossipServiceImpl
+github.com\\hyperledger\\fabric\\gossip\\service.DeliveryServiceFactory <|- github.com\\hyperledger\\fabric\\gossip\\service.deliveryFactoryImpl
+github.com\\hyperledger\\fabric\\gossip\\state.PayloadsBuffer <|- github.com\\hyperledger\\fabric\\gossip\\state.PayloadsBufferImpl
+github.com\\hyperledger\\fabric\\gossip\\state.GossipStateProvider <|- github.com\\hyperledger\\fabric\\gossip\\state.GossipStateProviderImpl
+github.com\\hyperledger\\fabric\\gossip\\state.GossipAdapter <|- github.com\\hyperledger\\fabric\\gossip\\gossip.gossipServiceImpl
+github.com\\hyperledger\\fabric\\gossip\\state.GossipAdapter <|- github.com\\hyperledger\\fabric\\gossip\\state\\mocks.GossipMock
+github.com\\hyperledger\\fabric\\gossip\\util.Subscription <|- github.com\\hyperledger\\fabric\\gossip\\util.subscription
+@enduml

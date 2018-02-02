@@ -1,0 +1,18 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\common\\cauthdsl {
+ class provider {
+  deserializer msp.IdentityDeserializer
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\cauthdsl {
+ class policy {
+  evaluator func([]*cb.SignedData,[]bool)bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\common\\cauthdsl {
+ class context {
+  IDNum int
+  principals []*msp.MSPPrincipal
+}
+}
+@enduml

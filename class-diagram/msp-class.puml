@@ -1,0 +1,186 @@
+@startuml
+namespace github.com\\hyperledger\\fabric\\msp {
+ class dsaSignature {
+  R,S *big.Int
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class validity {
+  NotBefore,NotAfter time.Time
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class publicKeyInfo {
+  Raw asn1.RawContent
+  Algorithm pkix.AlgorithmIdentifier
+  PublicKey asn1.BitString
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class certificate {
+  Raw asn1.RawContent
+  TBSCertificate tbsCertificate
+  SignatureAlgorithm pkix.AlgorithmIdentifier
+  SignatureValue asn1.BitString
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class tbsCertificate {
+  Raw asn1.RawContent
+  Version int
+  SerialNumber *big.Int
+  SignatureAlgorithm pkix.AlgorithmIdentifier
+  Issuer asn1.RawValue
+  Validity validity
+  Subject asn1.RawValue
+  PublicKey publicKeyInfo
+  UniqueId asn1.BitString
+  SubjectUniqueId asn1.BitString
+  Extensions []pkix.Extension
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class OrganizationalUnitIdentifiersConfiguration {
+  Certificate string
+  OrganizationalUnitIdentifier string
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class Configuration {
+  OrganizationalUnitIdentifiers []*OrganizationalUnitIdentifiersConfiguration
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class identity {
+  id *IdentityIdentifier
+  cert *x509.Certificate
+  pk bccsp.Key
+  msp *bccspmsp
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class signingidentity {
+  identity
+  signer crypto.Signer
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp\\mgmt {
+ class mspDeserializersManager {
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp\\mgmt {
+ class localMSPPrincipalGetter {
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class OUIdentifier {
+  CertifiersIdentifier []byte
+  OrganizationalUnitIdentifier string
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class IdentityIdentifier {
+  Mspid string
+  Id string
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class bccspmsp {
+  rootCerts []Identity
+  intermediateCerts []Identity
+  tlsRootCerts [][]byte
+  tlsIntermediateCerts [][]byte
+  certificationTreeInternalNodesMap map[string]bool
+  signer SigningIdentity
+  admins []Identity
+  bccsp bccsp.BCCSP
+  name string
+  opts *x509.VerifyOptions
+  CRL []*pkix.CertificateList
+  ouIdentifiers map[string][][]byte
+  cryptoConfig *m.FabricCryptoConfig
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class authorityKeyIdentifier {
+  KeyIdentifier []byte
+  AuthorityCertIssuer []byte
+  AuthorityCertSerialNumber big.Int
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ class mspManagerImpl {
+  mspsMap map[string]MSP
+  up bool
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp\\mgmt {
+ interface DeserializersManager  {
+  Deserialize(raw []byte)(*mspproto.SerializedIdentity,error)
+  GetLocalMSPIdentifier()string
+  GetLocalDeserializer()msp.IdentityDeserializer
+  GetChannelDeserializers()map[string]msp.IdentityDeserializer
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp\\mgmt {
+ interface MSPPrincipalGetter  {
+  Get(role string)(*msp.MSPPrincipal,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ interface IdentityDeserializer  {
+  DeserializeIdentity(serializedIdentity []byte)(Identity,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ interface MSPManager  {
+  Setup(msps []MSP)error
+  GetMSPs()(map[string]MSP,error)
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ interface MSP  {
+  Setup(config *msp.MSPConfig)error
+  GetType()ProviderType
+  GetIdentifier()(string,error)
+  GetSigningIdentity(identifier *IdentityIdentifier)(SigningIdentity,error)
+  GetDefaultSigningIdentity()(SigningIdentity,error)
+  GetTLSRootCerts()[][]byte
+  GetTLSIntermediateCerts()[][]byte
+  Validate(id Identity)error
+  SatisfiesPrincipal(id Identity,principal *msp.MSPPrincipal)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ interface Identity  {
+  GetIdentifier()*IdentityIdentifier
+  GetMSPIdentifier()string
+  Validate()error
+  GetOrganizationalUnits()[]*OUIdentifier
+  Verify(msg []byte,sig []byte)error
+  Serialize()([]byte,error)
+  SatisfiesPrincipal(principal *msp.MSPPrincipal)error
+}
+}
+namespace github.com\\hyperledger\\fabric\\msp {
+ interface SigningIdentity  {
+  Sign(msg []byte)([]byte,error)
+  GetPublicVersion()Identity
+}
+}
+github.com\\hyperledger\\fabric\\msp.certificate ---> github.com\\hyperledger\\fabric\\msp.tbsCertificate : TBSCertificate
+github.com\\hyperledger\\fabric\\msp.tbsCertificate ---> github.com\\hyperledger\\fabric\\msp.validity : Validity
+github.com\\hyperledger\\fabric\\msp.tbsCertificate ---> github.com\\hyperledger\\fabric\\msp.publicKeyInfo : PublicKey
+github.com\\hyperledger\\fabric\\msp.Configuration ---> "*" github.com\\hyperledger\\fabric\\msp.OrganizationalUnitIdentifiersConfiguration : OrganizationalUnitIdentifiers
+github.com\\hyperledger\\fabric\\msp.identity ---> github.com\\hyperledger\\fabric\\msp.IdentityIdentifier : id
+github.com\\hyperledger\\fabric\\msp.identity ---> github.com\\hyperledger\\fabric\\msp.bccspmsp : msp
+github.com\\hyperledger\\fabric\\msp.signingidentity -|> github.com\\hyperledger\\fabric\\msp.identity
+github.com\\hyperledger\\fabric\\msp\\mgmt.DeserializersManager <|- github.com\\hyperledger\\fabric\\msp\\mgmt.mspDeserializersManager
+github.com\\hyperledger\\fabric\\msp\\mgmt.MSPPrincipalGetter <|- github.com\\hyperledger\\fabric\\msp\\mgmt.localMSPPrincipalGetter
+github.com\\hyperledger\\fabric\\msp.IdentityDeserializer <|- github.com\\hyperledger\\fabric\\msp.bccspmsp
+github.com\\hyperledger\\fabric\\msp.IdentityDeserializer <|- github.com\\hyperledger\\fabric\\msp.mspManagerImpl
+github.com\\hyperledger\\fabric\\msp.MSPManager <|- github.com\\hyperledger\\fabric\\msp.mspManagerImpl
+github.com\\hyperledger\\fabric\\msp.MSP <|- github.com\\hyperledger\\fabric\\msp.bccspmsp
+github.com\\hyperledger\\fabric\\msp.Identity <|- github.com\\hyperledger\\fabric\\msp.identity
+github.com\\hyperledger\\fabric\\msp.SigningIdentity <|- github.com\\hyperledger\\fabric\\msp.signingidentity
+@enduml
